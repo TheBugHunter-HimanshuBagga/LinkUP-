@@ -1,5 +1,7 @@
 package com.himanshu.LinkUP.controller;
 
+import com.himanshu.LinkUP.dto.LoginRequest;
+import com.himanshu.LinkUP.dto.LoginResponse;
 import com.himanshu.LinkUP.dto.RegisterRequest;
 import com.himanshu.LinkUP.dto.RegisterResponse;
 import com.himanshu.LinkUP.entity.User;
@@ -23,5 +25,11 @@ public class AuthController {
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request){
         RegisterResponse response = authService.response(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> response(@RequestBody LoginRequest request){
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
     }
 }
