@@ -1,5 +1,6 @@
 package com.himanshu.LinkUP.service.impl;
 
+import com.himanshu.LinkUP.dto.PendingRequestResponse;
 import com.himanshu.LinkUP.entity.ConnectionRequest;
 import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.enums.ConnectionStatus;
@@ -7,17 +8,22 @@ import com.himanshu.LinkUP.repository.ConnectionRequestRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
 import com.himanshu.LinkUP.service.ConnectionRequestService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ConnectionRequestServiceImpl implements ConnectionRequestService {
     private final UserRepository userRepository;
     private final ConnectionRequestRepository connectionRequestRepository;
+    private final ModelMapper modelMapper;
     @Override
     public void sendRequest(Long receiverId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -47,5 +53,23 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
                 .createdAt(LocalDateTime.now())
                 .build();
         connectionRequestRepository.save(request);
+    }
+
+
+    @Override
+    public List<PendingRequestResponse> pendingRequest(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User receiver = userRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("Receiver Not Found")
+        );
+        List<ConnectionRequest> requests = connectionRequestRepository.findByReceiverAndStatus(receiver , ConnectionStatus.PENDING);
+        return requests.stream()
+                .map(request ->
+                        PendingRequestResponse.builder()
+                        .requestId(request.getId())
+                        .senderName(request.getSender().getFullName())
+                        .build())
+                .toList();
     }
 }
