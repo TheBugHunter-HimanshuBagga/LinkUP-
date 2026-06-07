@@ -8,4 +8,5 @@ public interface ConnectionRequestService {
     void sendRequest(Long receiverId);
     List<PendingRequestResponse> pendingRequest();
     String acceptPendingRequest(Long receiverId);
+    String rejectPendingRequest(Long receiverId);
 }

@@ -99,4 +99,31 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         connectionRequestRepository.save(request);
         return "Request Accepted Successfully";
     }
+
+    @Override
+    public String rejectPendingRequest(Long receiverId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // Himank
+        String email = authentication.getName(); // HImank
+        User currentUser = userRepository.findByEmail(email).orElseThrow(// Himank
+                () -> new RuntimeException("User does not exists")
+        );
+        ConnectionRequest request = connectionRequestRepository.findById(receiverId)
+                .orElseThrow(() ->
+                        new RuntimeException("Request Not Found") // himanshu request found
+                );
+        if(!request.getReceiver().getId().equals(currentUser.getId())){ // HITTT
+            throw new RuntimeException(
+                    "You are not authorized to reject the request"
+            );
+        }
+        // check weather the status is pending
+        if(request.getStatus() != ConnectionStatus.PENDING){
+            throw new RuntimeException(
+                    "Request is already processed"
+            );
+        }
+        request.setStatus(ConnectionStatus.REJECTED);
+        connectionRequestRepository.save(request);
+        return "Request has been rejected™";
+    }
 }

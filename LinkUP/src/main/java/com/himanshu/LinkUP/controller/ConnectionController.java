@@ -30,5 +30,9 @@ public class ConnectionController {
         connectionRequestService.acceptPendingRequest(requestId);
         return ResponseEntity.ok("Connection request has been accepted");
     }
-
+    @PutMapping("/reject/{requestId}")
+    public ResponseEntity<String> rejectPendingRequest(@PathVariable Long requestId){
+        connectionRequestService.rejectPendingRequest(requestId);
+        return ResponseEntity.ok("Connection request has been declined™");
+    }
 }
