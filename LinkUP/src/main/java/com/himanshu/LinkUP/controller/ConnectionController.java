@@ -25,4 +25,10 @@ public class ConnectionController {
         List<PendingRequestResponse> pendingRequestResponse = connectionRequestService.pendingRequest();
         return pendingRequestResponse;
     }
+    @PutMapping("/accept/{requestId}")
+    public ResponseEntity<String> acceptPendingRequests(@PathVariable Long requestId){
+        connectionRequestService.acceptPendingRequest(requestId);
+        return ResponseEntity.ok("Connection request has been accepted");
+    }
+
 }

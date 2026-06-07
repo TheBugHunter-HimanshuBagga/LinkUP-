@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -71,5 +70,33 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
                         .senderName(request.getSender().getFullName())
                         .build())
                 .toList();
+    }
+
+
+    @Override
+    public String acceptPendingRequest(Long receiverId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("User Not Found")
+                        );
+        ConnectionRequest request = connectionRequestRepository.findById(receiverId)
+                .orElseThrow(() ->
+                        new RuntimeException("Request Not Found")
+                        );
+        if(!request.getReceiver().getId().equals(currentUser.getId())){
+            throw new RuntimeException(
+                    "You are not authorized to accept the request"
+            );
+        }
+        if(request.getStatus() != ConnectionStatus.PENDING){
+            throw new RuntimeException(
+                    "Request is already processed"
+            );
+        }
+        request.setStatus(ConnectionStatus.ACCEPTED);
+        connectionRequestRepository.save(request);
+        return "Request Accepted Successfully";
     }
 }
