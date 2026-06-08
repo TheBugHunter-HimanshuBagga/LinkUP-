@@ -1,11 +1,17 @@
 package com.himanshu.LinkUP.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "connections")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class Connection {
 
     @Id
@@ -19,7 +25,6 @@ public class Connection {
     @ManyToOne
     @JoinColumn(name = "user2_id")
     User user2; // Many connections belong to user2
-
 
     LocalDateTime connectedAt;
 }

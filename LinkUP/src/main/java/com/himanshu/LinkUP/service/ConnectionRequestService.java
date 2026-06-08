@@ -7,6 +7,6 @@ import java.util.List;
 public interface ConnectionRequestService {
     void sendRequest(Long receiverId);
     List<PendingRequestResponse> pendingRequest();
-    String acceptPendingRequest(Long receiverId);
+    String acceptPendingRequest(Long requestId);
     String rejectPendingRequest(Long receiverId);
 }

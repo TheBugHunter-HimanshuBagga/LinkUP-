@@ -1,9 +1,11 @@
 package com.himanshu.LinkUP.service.impl;
 
 import com.himanshu.LinkUP.dto.PendingRequestResponse;
+import com.himanshu.LinkUP.entity.Connection;
 import com.himanshu.LinkUP.entity.ConnectionRequest;
 import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.enums.ConnectionStatus;
+import com.himanshu.LinkUP.repository.ConnectionRepository;
 import com.himanshu.LinkUP.repository.ConnectionRequestRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
 import com.himanshu.LinkUP.service.ConnectionRequestService;
@@ -23,6 +25,7 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
     private final UserRepository userRepository;
     private final ConnectionRequestRepository connectionRequestRepository;
     private final ModelMapper modelMapper;
+    private final ConnectionRepository connectionRepository;
     @Override
     public void sendRequest(Long receiverId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -74,14 +77,14 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
 
 
     @Override
-    public String acceptPendingRequest(Long receiverId){
+    public String acceptPendingRequest(Long requestId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new RuntimeException("User Not Found")
                         );
-        ConnectionRequest request = connectionRequestRepository.findById(receiverId)
+        ConnectionRequest request = connectionRequestRepository.findById(requestId)
                 .orElseThrow(() ->
                         new RuntimeException("Request Not Found")
                         );
@@ -96,7 +99,13 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
             );
         }
         request.setStatus(ConnectionStatus.ACCEPTED);
+        Connection connection = Connection.builder()
+                .user1(request.getSender())
+                .user2(request.getReceiver())
+                .connectedAt(LocalDateTime.now())
+                .build();
         connectionRequestRepository.save(request);
+        connectionRepository.save(connection);
         return "Request Accepted Successfully";
     }
 
