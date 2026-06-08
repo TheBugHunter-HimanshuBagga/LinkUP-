@@ -1,7 +1,9 @@
 package com.himanshu.LinkUP.controller;
 
+import com.himanshu.LinkUP.dto.MyConnectionResponse;
 import com.himanshu.LinkUP.dto.PendingRequestResponse;
 import com.himanshu.LinkUP.service.ConnectionRequestService;
+import com.himanshu.LinkUP.service.ConnectionService;
 import com.himanshu.LinkUP.service.impl.ConnectionRequestServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import java.util.List;
 @RequestMapping("/api/connections")
 public class ConnectionController {
     private final ConnectionRequestService connectionRequestService;
+    private final ConnectionService connectionService;
     @PostMapping("/send/{receiverId}")
     public ResponseEntity<String> sendRequest(@PathVariable Long receiverId){
         connectionRequestService.sendRequest(receiverId);
@@ -34,5 +37,10 @@ public class ConnectionController {
     public ResponseEntity<String> rejectPendingRequest(@PathVariable Long requestId){
         connectionRequestService.rejectPendingRequest(requestId);
         return ResponseEntity.ok("Connection request has been declined™");
+    }
+    @GetMapping("/my-connections")
+    public List<MyConnectionResponse> getMyConnections(){
+        List<MyConnectionResponse> myConnectionResponses = connectionService.myConnections();
+        return myConnectionResponses;
     }
 }
