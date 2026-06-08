@@ -126,4 +126,7 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         connectionRequestRepository.save(request);
         return "Request has been rejected™";
     }
+
+
+
 }
