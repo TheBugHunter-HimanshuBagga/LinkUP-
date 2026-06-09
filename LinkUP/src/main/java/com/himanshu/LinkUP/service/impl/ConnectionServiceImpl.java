@@ -2,8 +2,11 @@ package com.himanshu.LinkUP.service.impl;
 
 import com.himanshu.LinkUP.dto.MyConnectionResponse;
 import com.himanshu.LinkUP.entity.Connection;
+import com.himanshu.LinkUP.entity.ConnectionRequest;
 import com.himanshu.LinkUP.entity.User;
+import com.himanshu.LinkUP.enums.ConnectionStatus;
 import com.himanshu.LinkUP.repository.ConnectionRepository;
+import com.himanshu.LinkUP.repository.ConnectionRequestRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
 import com.himanshu.LinkUP.service.ConnectionService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.security.Security;
 import java.util.List;
 
 @Service
@@ -18,6 +22,7 @@ import java.util.List;
 public class ConnectionServiceImpl implements ConnectionService {
     private final UserRepository userRepository;
     private final ConnectionRepository connectionRepository;
+    private final ConnectionRequestRepository connectionRequestRepository;
     @Override
     public List<MyConnectionResponse> myConnections() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -42,5 +47,29 @@ public class ConnectionServiceImpl implements ConnectionService {
                             .build();
                 })
                 .toList();
+    }
+
+    @Override
+    public String withdrawRequest(Long requestId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("User not Found!!")
+        );
+        ConnectionRequest request = connectionRequestRepository.findById(requestId).orElseThrow(
+                () -> new RuntimeException("Request Not Found")
+        );
+        if(!request.getSender().getId().equals(currentUser.getId())){
+            throw new RuntimeException(
+                    "You are not authorized to withdraw the request"
+            );
+        }
+        if(request.getStatus() != ConnectionStatus.PENDING){
+            throw new RuntimeException(
+                    "Only Pending request can be withdrawn, Your request was already processed"
+            );
+        }
+        connectionRequestRepository.delete(request);
+        return "Your request WITHDRAWN successfully";
     }
 }

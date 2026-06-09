@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ConnectionService {
     List<MyConnectionResponse> myConnections();
+    String withdrawRequest(Long requestId);
 }

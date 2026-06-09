@@ -43,4 +43,9 @@ public class ConnectionController {
         List<MyConnectionResponse> myConnectionResponses = connectionService.myConnections();
         return myConnectionResponses;
     }
+    @DeleteMapping("/withdraw/{requestId}")
+    public ResponseEntity<String> withdrawRequest(@PathVariable Long requestId){
+        String message = connectionService.withdrawRequest(requestId);
+        return ResponseEntity.ok(message);
+    }
 }
