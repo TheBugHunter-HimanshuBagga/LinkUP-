@@ -10,4 +10,5 @@ public interface ConnectionService {
     List<MyConnectionResponse> myConnections();
     String withdrawRequest(Long requestId);
     List<SentRequestResponse> sentRequests();
+    Long connectionCount();
 }

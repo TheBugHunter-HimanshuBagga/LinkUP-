@@ -92,4 +92,15 @@ public class ConnectionServiceImpl implements ConnectionService {
                                 .build())
                 .toList();
     }
+
+    @Override
+    public Long connectionCount(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("Current User not exists")
+        );
+        List<Connection> connections = connectionRepository.findByUser1OrUser2(currentUser , currentUser);
+        return (long) connections.size();
+    }
 }

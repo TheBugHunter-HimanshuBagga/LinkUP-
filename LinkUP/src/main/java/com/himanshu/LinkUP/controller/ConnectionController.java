@@ -55,4 +55,8 @@ public class ConnectionController {
         List<SentRequestResponse> sentRequestResponse = connectionService.sentRequests();
         return sentRequestResponse;
     }
+    @GetMapping("/count")
+    public Long connectionCount(){
+        return connectionService.connectionCount();
+    }
 }
