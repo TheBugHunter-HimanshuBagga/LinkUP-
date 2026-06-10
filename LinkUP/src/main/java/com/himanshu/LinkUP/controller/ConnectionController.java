@@ -59,4 +59,9 @@ public class ConnectionController {
     public Long connectionCount(){
         return connectionService.connectionCount();
     }
+    @DeleteMapping("/remove/{connectionId}")
+    public ResponseEntity<String> removeConnection(@PathVariable Long connectionId){
+        connectionService.removeConnectionById(connectionId);
+        return ResponseEntity.ok("Connection Removed Successfully");
+    }
 }

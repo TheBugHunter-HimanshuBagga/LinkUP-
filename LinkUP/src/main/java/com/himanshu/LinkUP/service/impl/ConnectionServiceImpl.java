@@ -11,6 +11,7 @@ import com.himanshu.LinkUP.repository.ConnectionRequestRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
 import com.himanshu.LinkUP.service.ConnectionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -102,5 +103,26 @@ public class ConnectionServiceImpl implements ConnectionService {
         );
         List<Connection> connections = connectionRepository.findByUser1OrUser2(currentUser , currentUser);
         return (long) connections.size();
+    }
+
+    @Override
+    public String removeConnectionById(Long connectionId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("Current User Not exists")
+        );
+        Connection connection = connectionRepository.findById(connectionId).orElseThrow(
+                () -> new RuntimeException("Connection does not exists")
+        );
+        if(!connection.getUser1().getId().equals(currentUser.getId())
+        && !connection.getUser2().getId().equals(currentUser.getId())
+        ){
+            throw new RuntimeException(
+                "You are not authorized to remove this connection"
+            );
+        }
+        connectionRepository.delete(connection);
+        return "Connection Deleted Successfully";
     }
 }
