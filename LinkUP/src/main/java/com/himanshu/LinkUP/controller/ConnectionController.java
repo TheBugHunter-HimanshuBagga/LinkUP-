@@ -2,6 +2,8 @@ package com.himanshu.LinkUP.controller;
 
 import com.himanshu.LinkUP.dto.MyConnectionResponse;
 import com.himanshu.LinkUP.dto.PendingRequestResponse;
+import com.himanshu.LinkUP.dto.SentRequestResponse;
+import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.service.ConnectionRequestService;
 import com.himanshu.LinkUP.service.ConnectionService;
 import com.himanshu.LinkUP.service.impl.ConnectionRequestServiceImpl;
@@ -47,5 +49,10 @@ public class ConnectionController {
     public ResponseEntity<String> withdrawRequest(@PathVariable Long requestId){
         String message = connectionService.withdrawRequest(requestId);
         return ResponseEntity.ok(message);
+    }
+    @GetMapping("/sent")
+    public List<SentRequestResponse> sentByMe(){ //Requests sent BY me
+        List<SentRequestResponse> sentRequestResponse = connectionService.sentRequests();
+        return sentRequestResponse;
     }
 }

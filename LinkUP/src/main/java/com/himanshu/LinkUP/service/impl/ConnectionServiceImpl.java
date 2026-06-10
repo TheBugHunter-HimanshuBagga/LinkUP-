@@ -1,6 +1,7 @@
 package com.himanshu.LinkUP.service.impl;
 
 import com.himanshu.LinkUP.dto.MyConnectionResponse;
+import com.himanshu.LinkUP.dto.SentRequestResponse;
 import com.himanshu.LinkUP.entity.Connection;
 import com.himanshu.LinkUP.entity.ConnectionRequest;
 import com.himanshu.LinkUP.entity.User;
@@ -71,5 +72,24 @@ public class ConnectionServiceImpl implements ConnectionService {
         }
         connectionRequestRepository.delete(request);
         return "Your request WITHDRAWN successfully";
+    }
+
+    @Override
+    public List<SentRequestResponse> sentRequests(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("Current User Not Found")
+        );
+        // to see the sent Request i need to check it from the ConnectionRequest
+        List<ConnectionRequest> requests = connectionRequestRepository.findBySender(currentUser);
+        return requests.stream()
+                .map(request ->
+                        SentRequestResponse.builder()
+                                .receiverId(request.getReceiver().getId())
+                                .receiverName(request.getReceiver().getFullName())
+                                .status(request.getStatus())
+                                .build())
+                .toList();
     }
 }
