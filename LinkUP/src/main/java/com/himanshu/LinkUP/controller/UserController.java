@@ -1,9 +1,11 @@
 package com.himanshu.LinkUP.controller;
 
+import com.himanshu.LinkUP.dto.UserProfileResponse;
 import com.himanshu.LinkUP.dto.UserResponse;
 import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 
@@ -35,6 +37,12 @@ public class UserController {
                                            @RequestParam(defaultValue = "5") int size){
         Page<UserResponse> userResponses = userService.filterUsersByCity(city , page , size);
         return userResponses;
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserProfileResponse> getUserProfile(@PathVariable Long userId){
+        UserProfileResponse userProfileResponse = userService.getUserProfile(userId);
+        return ResponseEntity.ok(userProfileResponse);
     }
 }
 

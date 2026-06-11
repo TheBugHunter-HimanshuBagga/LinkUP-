@@ -1,20 +1,30 @@
 package com.himanshu.LinkUP.service.impl;
 
+import com.himanshu.LinkUP.dto.UserProfileResponse;
 import com.himanshu.LinkUP.dto.UserResponse;
+import com.himanshu.LinkUP.entity.Connection;
+import com.himanshu.LinkUP.entity.ConnectionRequest;
 import com.himanshu.LinkUP.entity.User;
+import com.himanshu.LinkUP.repository.ConnectionRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
+import com.himanshu.LinkUP.service.AuthService;
 import com.himanshu.LinkUP.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final ConnectionRepository connectionRepository;
     @Override
     public Page<UserResponse> discoverUser(int page, int size , String sortBy , String direction) {
         Sort sort =
@@ -53,6 +63,21 @@ public class UserServiceImpl implements UserService {
                         .build()
         );
     }
+
+    @Override
+    public UserProfileResponse getUserProfile(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("User Not Found")
+        );
+        Long connection = (long) connectionRepository.findByUser1OrUser2(user,user).size();
+        return UserProfileResponse.builder()
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .connectionCount(connection)
+                .build();
+    }
+
     @Override
     public Page<UserResponse> filterUsersByCity(String city, int page, int size) {
         Pageable pageable = PageRequest.of(page , size);
@@ -72,5 +97,7 @@ public class UserServiceImpl implements UserService {
                         .interests(user.getInterests())
                         .build()
                 );
+
+
     }
 }
