@@ -1,5 +1,6 @@
 package com.himanshu.LinkUP.service.impl;
 
+import com.himanshu.LinkUP.dto.UpdateProfileRequest;
 import com.himanshu.LinkUP.dto.UserProfileResponse;
 import com.himanshu.LinkUP.dto.UserResponse;
 import com.himanshu.LinkUP.entity.Connection;
@@ -100,4 +101,40 @@ public class UserServiceImpl implements UserService {
 
 
     }
+
+    @Override
+    public UserProfileResponse updateProfile(UpdateProfileRequest updateProfileRequest){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User do not exists"));
+        // if user exists then , let them put the data
+        // if user just want one field to be updated
+        if(updateProfileRequest.getBio() != null){
+            currentUser.setBio(updateProfileRequest.getBio());
+        }
+
+        if(updateProfileRequest.getSkills() != null){
+            currentUser.setSkills(updateProfileRequest.getSkills());
+        }
+
+        if(updateProfileRequest.getInterests() != null){
+            currentUser.setInterests(updateProfileRequest.getInterests());
+        }
+
+        if(updateProfileRequest.getCity() != null){
+            currentUser.setCity(updateProfileRequest.getCity());
+        }
+        User savedUser = userRepository.save(currentUser);
+
+        Long connectionCount = (long) connectionRepository.findByUser1OrUser2(savedUser,savedUser).size();
+
+        return UserProfileResponse.builder()
+                .id(savedUser.getId())
+                .fullName(savedUser.getFullName())
+                .email(savedUser.getEmail())
+                .connectionCount(connectionCount)
+                .build();
+    }
+
 }

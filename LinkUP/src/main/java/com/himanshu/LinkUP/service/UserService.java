@@ -1,5 +1,6 @@
 package com.himanshu.LinkUP.service;
 
+import com.himanshu.LinkUP.dto.UpdateProfileRequest;
 import com.himanshu.LinkUP.dto.UserProfileResponse;
 import com.himanshu.LinkUP.dto.UserResponse;
 import com.himanshu.LinkUP.entity.User;
@@ -26,4 +27,5 @@ public interface UserService {
 
     UserProfileResponse getUserProfile(Long userId);
 
+    UserProfileResponse updateProfile(UpdateProfileRequest updateProfileRequest);
 }

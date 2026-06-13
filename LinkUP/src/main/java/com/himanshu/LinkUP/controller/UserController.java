@@ -1,8 +1,8 @@
 package com.himanshu.LinkUP.controller;
 
+import com.himanshu.LinkUP.dto.UpdateProfileRequest;
 import com.himanshu.LinkUP.dto.UserProfileResponse;
 import com.himanshu.LinkUP.dto.UserResponse;
-import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +42,12 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<UserProfileResponse> getUserProfile(@PathVariable Long userId){
         UserProfileResponse userProfileResponse = userService.getUserProfile(userId);
+        return ResponseEntity.ok(userProfileResponse);
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<UserProfileResponse> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest){
+        UserProfileResponse userProfileResponse = userService.updateProfile(updateProfileRequest);
         return ResponseEntity.ok(userProfileResponse);
     }
 }
