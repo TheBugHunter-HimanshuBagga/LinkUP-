@@ -12,5 +12,9 @@ public interface ConnectionRequestRepository extends JpaRepository<ConnectionReq
     boolean existsBySenderAndReceiver(User sender, User receiver);
     List<ConnectionRequest> findByReceiverAndStatus(User receiver, ConnectionStatus status);
     List<ConnectionRequest> findBySender(User sender);
+    List<ConnectionRequest> findBySenderOrReceiver(
+            User sender,
+            User receiver
+    );
 
 }

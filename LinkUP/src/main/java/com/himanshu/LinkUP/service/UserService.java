@@ -3,8 +3,11 @@ package com.himanshu.LinkUP.service;
 import com.himanshu.LinkUP.dto.UpdateProfileRequest;
 import com.himanshu.LinkUP.dto.UserProfileResponse;
 import com.himanshu.LinkUP.dto.UserResponse;
+import com.himanshu.LinkUP.dto.UserSuggestionResponse;
 import com.himanshu.LinkUP.entity.User;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -28,4 +31,6 @@ public interface UserService {
     UserProfileResponse getUserProfile(Long userId);
 
     UserProfileResponse updateProfile(UpdateProfileRequest updateProfileRequest);
+
+    List<UserSuggestionResponse> getSuggestions();
 }

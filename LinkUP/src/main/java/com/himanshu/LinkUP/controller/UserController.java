@@ -3,11 +3,15 @@ package com.himanshu.LinkUP.controller;
 import com.himanshu.LinkUP.dto.UpdateProfileRequest;
 import com.himanshu.LinkUP.dto.UserProfileResponse;
 import com.himanshu.LinkUP.dto.UserResponse;
+import com.himanshu.LinkUP.dto.UserSuggestionResponse;
 import com.himanshu.LinkUP.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.type.ListType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -50,6 +54,12 @@ public class UserController {
         UserProfileResponse userProfileResponse = userService.updateProfile(updateProfileRequest);
         return ResponseEntity.ok(userProfileResponse);
     }
+
+        @GetMapping("/suggestions")
+        public List<UserSuggestionResponse> getSuggestions(){
+            List<UserSuggestionResponse> userSuggestionResponse = userService.getSuggestions();
+            return userSuggestionResponse;
+        }
 }
 
 

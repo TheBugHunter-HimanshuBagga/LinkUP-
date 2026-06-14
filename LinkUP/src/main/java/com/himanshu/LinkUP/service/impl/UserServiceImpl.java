@@ -3,12 +3,16 @@ package com.himanshu.LinkUP.service.impl;
 import com.himanshu.LinkUP.dto.UpdateProfileRequest;
 import com.himanshu.LinkUP.dto.UserProfileResponse;
 import com.himanshu.LinkUP.dto.UserResponse;
+import com.himanshu.LinkUP.dto.UserSuggestionResponse;
 import com.himanshu.LinkUP.entity.Connection;
 import com.himanshu.LinkUP.entity.ConnectionRequest;
 import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.repository.ConnectionRepository;
+import com.himanshu.LinkUP.repository.ConnectionRequestRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
 import com.himanshu.LinkUP.service.AuthService;
+import com.himanshu.LinkUP.service.ConnectionRequestService;
+import com.himanshu.LinkUP.service.ConnectionService;
 import com.himanshu.LinkUP.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,13 +23,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ConnectionRepository connectionRepository;
+    private final ConnectionRequestRepository connectionRequestRepository;
     @Override
     public Page<UserResponse> discoverUser(int page, int size , String sortBy , String direction) {
         Sort sort =
@@ -137,4 +144,85 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    @Override
+    public List<UserSuggestionResponse> getSuggestions() {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User currentUser =
+                userRepository.findByEmail(email)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "User does not exist"
+                                )
+                        );
+
+        List<User> allUsers = userRepository.findAll();
+
+        Set<Long> excludedUserIds = new HashSet<>();
+
+        // Exclude current user
+        excludedUserIds.add(currentUser.getId());
+
+        // Exclude connected users
+        List<Connection> connections =
+                connectionRepository.findByUser1OrUser2(
+                        currentUser,
+                        currentUser
+                );
+
+        for (Connection connection : connections) {
+
+            if (connection.getUser1()
+                    .getId()
+                    .equals(currentUser.getId())) {
+
+                excludedUserIds.add(
+                        connection.getUser2().getId()
+                );
+
+            } else {
+
+                excludedUserIds.add(
+                        connection.getUser1().getId()
+                );
+            }
+        }
+
+        // Exclude users having requests with current user
+        List<ConnectionRequest> requests =
+                connectionRequestRepository
+                        .findBySenderOrReceiver(
+                                currentUser,
+                                currentUser
+                        );
+
+        for (ConnectionRequest request : requests) {
+
+            excludedUserIds.add(
+                    request.getSender().getId()
+            );
+
+            excludedUserIds.add(
+                    request.getReceiver().getId()
+            );
+        }
+
+        return allUsers.stream()
+                .filter(user ->
+                        !excludedUserIds.contains(
+                                user.getId()
+                        )
+                )
+                .map(user ->
+                        UserSuggestionResponse.builder()
+                                .id(user.getId())
+                                .fullName(user.getFullName())
+                                .build()
+                )
+                .toList();
+    }
 }
