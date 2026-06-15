@@ -137,4 +137,17 @@ public class ConnectionServiceImpl implements ConnectionService {
         List<ConnectionRequest> connectionRequest = connectionRequestRepository.findByReceiverAndStatus(currentUser,ConnectionStatus.PENDING);
         return (long) connectionRequest.size();
     }
+
+    @Override
+    public Long sentRequestCount(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(
+                        () -> new RuntimeException("User doesn't exists")
+                );
+        // find By sender
+        List<ConnectionRequest> connectionRequests = connectionRequestRepository.findBySender(currentUser);
+        return (long) connectionRequests.size();
+    }
 }

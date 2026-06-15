@@ -12,4 +12,5 @@ public interface ConnectionService {
     Long connectionCount();
     String removeConnectionById(Long connectionId);
     Long pendingRequestCount();
+    Long sentRequestCount();
 }

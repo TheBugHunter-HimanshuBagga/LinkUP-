@@ -69,4 +69,9 @@ public class ConnectionController {
     public ResponseEntity<Long> pendingRequestCount(){
         return  ResponseEntity.ok(connectionService.pendingRequestCount());
     }
+
+    @GetMapping("/sent/count")
+    public ResponseEntity<Long> sentRequestCount(){
+        return ResponseEntity.ok(connectionService.sentRequestCount());
+    }
 }
