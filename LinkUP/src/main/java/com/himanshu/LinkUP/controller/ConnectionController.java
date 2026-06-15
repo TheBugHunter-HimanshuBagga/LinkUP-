@@ -64,4 +64,9 @@ public class ConnectionController {
         connectionService.removeConnectionById(connectionId);
         return ResponseEntity.ok("Connection Removed Successfully");
     }
+
+    @GetMapping("/pending/count")
+    public ResponseEntity<Long> pendingRequestCount(){
+        return  ResponseEntity.ok(connectionService.pendingRequestCount());
+    }
 }

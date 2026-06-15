@@ -125,4 +125,16 @@ public class ConnectionServiceImpl implements ConnectionService {
         connectionRepository.delete(connection);
         return "Connection Deleted Successfully";
     }
+
+    @Override
+    public Long pendingRequestCount()
+    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User doesn't exists"));
+        // if exists
+        List<ConnectionRequest> connectionRequest = connectionRequestRepository.findByReceiverAndStatus(currentUser,ConnectionStatus.PENDING);
+        return (long) connectionRequest.size();
+    }
 }
