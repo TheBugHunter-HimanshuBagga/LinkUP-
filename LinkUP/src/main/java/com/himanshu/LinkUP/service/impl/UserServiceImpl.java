@@ -23,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.security.Security;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -224,5 +225,25 @@ public class UserServiceImpl implements UserService {
                                 .build()
                 )
                 .toList();
+    }
+
+    @Override
+    public UserProfileResponse getMyProfile(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(
+                        () -> new RuntimeException("User doesn't exists")
+                );
+
+        Long connectionCount = (long) connectionRepository.findByUser1OrUser2(currentUser,currentUser).size();
+        // if exists then
+        // return UserProfileResponseBuilder
+        return UserProfileResponse.builder()
+                .id(currentUser.getId())
+                .fullName(currentUser.getFullName())
+                .email(currentUser.getEmail())
+                .connectionCount(connectionCount)
+                .build();
     }
 }

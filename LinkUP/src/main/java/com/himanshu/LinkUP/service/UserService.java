@@ -33,4 +33,7 @@ public interface UserService {
     UserProfileResponse updateProfile(UpdateProfileRequest updateProfileRequest);
 
     List<UserSuggestionResponse> getSuggestions();
+
+
+    UserProfileResponse getMyProfile();
 }

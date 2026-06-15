@@ -43,6 +43,12 @@ public class UserController {
         return userResponses;
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<UserProfileResponse> getMyProfile(){
+        UserProfileResponse userProfileResponse = userService.getMyProfile();
+        return ResponseEntity.ok(userProfileResponse);
+    }
+
     @GetMapping("/{userId}")
     public ResponseEntity<UserProfileResponse> getUserProfile(@PathVariable Long userId){
         UserProfileResponse userProfileResponse = userService.getUserProfile(userId);
@@ -55,11 +61,12 @@ public class UserController {
         return ResponseEntity.ok(userProfileResponse);
     }
 
-        @GetMapping("/suggestions")
-        public List<UserSuggestionResponse> getSuggestions(){
-            List<UserSuggestionResponse> userSuggestionResponse = userService.getSuggestions();
-            return userSuggestionResponse;
-        }
+    @GetMapping("/suggestions")
+    public List<UserSuggestionResponse> getSuggestions(){
+        List<UserSuggestionResponse> userSuggestionResponse = userService.getSuggestions();
+        return userSuggestionResponse;
+    }
+
 }
 
 
