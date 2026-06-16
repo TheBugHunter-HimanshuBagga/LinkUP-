@@ -1,12 +1,10 @@
 package com.himanshu.LinkUP.service.impl;
 
-import com.himanshu.LinkUP.dto.UpdateProfileRequest;
-import com.himanshu.LinkUP.dto.UserProfileResponse;
-import com.himanshu.LinkUP.dto.UserResponse;
-import com.himanshu.LinkUP.dto.UserSuggestionResponse;
+import com.himanshu.LinkUP.dto.*;
 import com.himanshu.LinkUP.entity.Connection;
 import com.himanshu.LinkUP.entity.ConnectionRequest;
 import com.himanshu.LinkUP.entity.User;
+import com.himanshu.LinkUP.enums.ConnectionStatus;
 import com.himanshu.LinkUP.repository.ConnectionRepository;
 import com.himanshu.LinkUP.repository.ConnectionRequestRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
@@ -244,6 +242,28 @@ public class UserServiceImpl implements UserService {
                 .fullName(currentUser.getFullName())
                 .email(currentUser.getEmail())
                 .connectionCount(connectionCount)
+                .build();
+    }
+
+    @Override
+    public UserStatsResponse getUserStats(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(
+                        () -> new RuntimeException("currentUser doesn't exists")
+                );
+
+        Long connectionCount = (long) connectionRepository.findByUser1OrUser2(currentUser,currentUser).size();
+
+        Long pendingRequestCount = (long) connectionRequestRepository.findByReceiverAndStatus(currentUser, ConnectionStatus.PENDING).size();
+
+        Long sentRequestCount = (long) connectionRequestRepository.findBySender(currentUser).size();
+        // UserStatsResponse builder
+        return UserStatsResponse.builder()
+                .connectionCount(connectionCount)
+                .pendingRequestCount(pendingRequestCount)
+                .sentRequestCount(sentRequestCount)
                 .build();
     }
 }

@@ -9,4 +9,5 @@ public interface ConnectionRequestService {
     List<PendingRequestResponse> pendingRequest();
     String acceptPendingRequest(Long requestId);
     String rejectPendingRequest(Long receiverId);
+    List<PendingRequestResponse> latestPendingRequest();
 }

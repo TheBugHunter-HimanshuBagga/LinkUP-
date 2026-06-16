@@ -74,4 +74,10 @@ public class ConnectionController {
     public ResponseEntity<Long> sentRequestCount(){
         return ResponseEntity.ok(connectionService.sentRequestCount());
     }
+
+    @GetMapping("/pending/latest")
+    public List<PendingRequestResponse> latestPendingRequest(){
+        List<PendingRequestResponse> pendingRequestResponses = connectionRequestService.latestPendingRequest();
+        return pendingRequestResponses;
+    }
 }

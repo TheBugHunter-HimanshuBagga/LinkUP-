@@ -136,6 +136,25 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         return "Request has been rejected™";
     }
 
+    @Override
+    public List<PendingRequestResponse> latestPendingRequest(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(
+                        () -> new RuntimeException("CurrentUser doesn't exists")
+                );
+        List<ConnectionRequest> connectionRequests = connectionRequestRepository.findByReceiverAndStatus(currentUser,ConnectionStatus.PENDING);
 
+        return connectionRequests.stream()
+                .limit(3) // only  3 latest request we will see
+                .map(connectionRequest ->
+                        PendingRequestResponse.builder()
+                                .requestId(connectionRequest.getId())
+                                .senderName(connectionRequest.getSender().getFullName())
+                                .build()
+                )
+                .toList();
+    }
 
 }

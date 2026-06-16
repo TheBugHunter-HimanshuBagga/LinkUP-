@@ -1,9 +1,6 @@
 package com.himanshu.LinkUP.controller;
 
-import com.himanshu.LinkUP.dto.UpdateProfileRequest;
-import com.himanshu.LinkUP.dto.UserProfileResponse;
-import com.himanshu.LinkUP.dto.UserResponse;
-import com.himanshu.LinkUP.dto.UserSuggestionResponse;
+import com.himanshu.LinkUP.dto.*;
 import com.himanshu.LinkUP.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.type.ListType;
@@ -65,6 +62,12 @@ public class UserController {
     public List<UserSuggestionResponse> getSuggestions(){
         List<UserSuggestionResponse> userSuggestionResponse = userService.getSuggestions();
         return userSuggestionResponse;
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<UserStatsResponse> getUserStats(){
+        UserStatsResponse userStatsResponse = userService.getUserStats();
+        return ResponseEntity.ok(userStatsResponse);
     }
 
 }

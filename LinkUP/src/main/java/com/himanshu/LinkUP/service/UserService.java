@@ -1,9 +1,6 @@
 package com.himanshu.LinkUP.service;
 
-import com.himanshu.LinkUP.dto.UpdateProfileRequest;
-import com.himanshu.LinkUP.dto.UserProfileResponse;
-import com.himanshu.LinkUP.dto.UserResponse;
-import com.himanshu.LinkUP.dto.UserSuggestionResponse;
+import com.himanshu.LinkUP.dto.*;
 import com.himanshu.LinkUP.entity.User;
 import org.springframework.data.domain.Page;
 
@@ -36,4 +33,6 @@ public interface UserService {
 
 
     UserProfileResponse getMyProfile();
+
+    UserStatsResponse getUserStats();
 }
