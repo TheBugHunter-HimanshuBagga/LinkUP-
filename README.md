@@ -1,163 +1,113 @@
 # LinkUP 🚀
 
-### A Modern Student Networking Platform Built with Spring Boot
+## A Professional Networking Platform Inspired by LinkedIn
 
-LinkUP is a backend-driven student networking platform that enables students to discover, connect, and build meaningful academic and professional relationships based on shared interests, skills, and educational backgrounds.
+LinkUP is a scalable backend-driven professional networking platform built using Spring Boot.
 
-The project is designed to simulate a production-grade social networking system while demonstrating enterprise-level backend development practices using Spring Boot.
+The platform enables users to create professional profiles, discover people with similar interests and skills, build meaningful connections, and grow their professional network through social interactions.
+
+The goal of LinkUP is to simulate a production-grade networking platform while demonstrating enterprise-level backend engineering practices including security, scalability, clean architecture, and API design.
 
 ---
 
 ## 🎯 Project Vision
 
-Students often struggle to find peers with similar interests, technical skills, career goals, or project ideas.
+Modern professionals need a platform where they can:
 
-LinkUP solves this problem by providing:
+* Build meaningful professional relationships
+* Discover like-minded individuals
+* Showcase skills and interests
+* Expand their network
+* Engage with content and communities
 
-- Secure user authentication
-- Personalized student profiles
-- Intelligent user discovery
-- Connection request management
-- Advanced search and filtering
-- Scalable REST APIs
-
-The platform acts as a professional networking ecosystem tailored for students.
+LinkUP aims to provide these capabilities through a secure and scalable backend architecture inspired by platforms like LinkedIn.
 
 ---
 
-## ✨ Key Features
+## 📌 Current Backend Capabilities
 
-### 🔐 Authentication & Security
+### Authentication & Security
 
-- User Registration
-- User Login
-- JWT Authentication
-- Password Encryption using BCrypt
-- Role-Based Authorization
-- Protected APIs
+* User Registration
+* User Login
+* JWT Authentication
+* BCrypt Password Encryption
+* Role-Based Authorization
+* Protected APIs
+* Spring Security
 
----
+### User Management
 
-### 👤 Profile Management
+* Create Profile
+* View Profile
+* Update Profile
+* Personalized User Statistics
+* Skills & Interests Management
 
-- Create Profile
-- Update Profile
-- View Profiles
-- Delete Profile
-- Academic Information
-- Skills & Interests Management
+### User Discovery
 
----
+* Search Users
+* Filter Users By City
+* Pagination & Sorting
+* Intelligent User Suggestions
+* Mutual Connections Discovery
 
-### 🔍 Advanced User Discovery
+### Connection Management
 
-Discover students using powerful search capabilities.
+* Send Connection Requests
+* Accept Requests
+* Reject Requests
+* Withdraw Requests
+* View Pending Requests
+* View Sent Requests
+* View Connections
+* Remove Connections
+* Mutual Connections
+* Connection Analytics
 
-#### Search By
+### Analytics
 
-- Name
-- Skills
-- Interests
-- Bio
+* Total Connections Count
+* Pending Requests Count
+* Sent Requests Count
+* User Networking Statistics
 
-#### Filter By
+### Developer Experience
 
-- City
-- Branch
-- Academic Year
-- Age Range
-
-#### Sort By
-
-- Name
-- Age
-- Profile Creation Date
-
-#### Pagination
-
-Efficiently handle thousands of users through paginated API responses.
-
-Example:
-
-```http
-GET /api/users/discover?page=0&size=10&sort=createdAt,desc
-```
+* Swagger/OpenAPI Documentation
+* Layered Architecture
+* DTO-Based Design
+* RESTful APIs
+* Spring Data JPA
 
 ---
 
-### 🤝 Connection System
+## 🏗️ Architecture
 
-A complete networking workflow.
-
-- Send Connection Requests
-- Accept Requests
-- Reject Requests
-- Withdraw Requests
-- View Pending Requests
-- View Sent Requests
-- View Connections
-- Remove Connections
-
-Connection Status Flow:
-
-```text
-NOT_CONNECTED
-      ↓
-REQUEST_SENT
-      ↓
-PENDING
-      ↓
-CONNECTED
-```
-
----
-
-### 📊 Dashboard & Analytics
-
-Track networking activity.
-
-- Total Connections
-- Pending Requests
-- Sent Requests
-- Platform Statistics
-
----
-
-### 🛡️ Admin Module
-
-Administrative controls for platform management.
-
-- View Users
-- Manage Users
-- Platform Statistics
-- User Monitoring
-
----
-
-## 🏗️ System Architecture
-
-```text
 Client
-   │
-   ▼
+
+↓
+
 REST Controllers
-   │
-   ▼
+
+↓
+
 Service Layer
-   │
-   ▼
+
+↓
+
 Repository Layer
-   │
-   ▼
+
+↓
+
 MySQL Database
-```
 
-The project follows a clean layered architecture that promotes:
+The project follows a clean layered architecture focused on:
 
-- Scalability
-- Maintainability
-- Separation of Concerns
-- Testability
+* Scalability
+* Maintainability
+* Testability
+* Separation of Concerns
 
 ---
 
@@ -165,185 +115,151 @@ The project follows a clean layered architecture that promotes:
 
 ### User
 
-```text
-id
-fullName
-email
-password
-age
-gender
-city
-college
-branch
-year
-bio
-skills
-interests
-profilePictureUrl
-createdAt
-```
+* id
+* fullName
+* email
+* password
+* age
+* gender
+* city
+* college
+* branch
+* year
+* bio
+* skills
+* interests
+* profilePictureUrl
+* createdAt
 
 ### Role
 
-```text
-ROLE_USER
-ROLE_ADMIN
-```
+* ROLE_USER
+* ROLE_ADMIN
 
 ### ConnectionRequest
 
-```text
-id
-sender
-receiver
-status
-createdAt
-```
+* id
+* sender
+* receiver
+* status
+* createdAt
 
 ### Connection
 
-```text
-id
-user1
-user2
-connectedAt
-```
+* id
+* user1
+* user2
+* connectedAt
 
 ---
 
-## 🚀 REST APIs
+## 🧠 Technologies Used
 
-### Authentication
+### Backend
 
-```http
-POST /api/auth/register
-POST /api/auth/login
-GET  /api/auth/me
-```
+* Java 21
+* Spring Boot
+* Spring Security
+* Spring Data JPA
+* Hibernate
+* JWT
 
-### User Management
+### Database
 
-```http
-GET    /api/users/{id}
-PUT    /api/users/profile
-DELETE /api/users/profile
-```
+* MySQL
 
-### User Discovery
+### Documentation
 
-```http
-GET /api/users/discover
-```
+* Swagger/OpenAPI
 
-Supports:
+### Build Tool
 
-```http
-?page=0
-&size=10
-&sort=age,desc
-&city=Delhi
-&branch=CSE
-&year=3
-&keyword=spring
-```
-
-### Connection Requests
-
-```http
-POST   /api/connections/send/{receiverId}
-
-PUT    /api/connections/accept/{requestId}
-
-PUT    /api/connections/reject/{requestId}
-
-DELETE /api/connections/request/{requestId}
-
-GET    /api/connections/pending
-
-GET    /api/connections/sent
-```
-
-### Connections
-
-```http
-GET    /api/connections/my-connections
-
-DELETE /api/connections/remove/{connectionId}
-
-GET    /api/connections/status/{userId}
-```
-
----
-**MORE TO BE ADDED if needed**
-## 🧠 Spring Boot Concepts Demonstrated
-
-### Core Development
-
-- RESTful API Design
-- Dependency Injection
-- Layered Architecture
-- DTO Pattern
-
-### Persistence Layer
-
-- Spring Data JPA
-- Hibernate ORM
-- Entity Relationships
-- JPQL Queries
-- Native Queries
-
-### Security
-
-- Spring Security
-- JWT Authentication
-- BCrypt Password Encryption
-- Role-Based Access Control
-
-### Advanced Backend Concepts
-
-- Pagination
-- Sorting
-- Searching
-- Filtering
-- Dynamic Query Generation
-- JPA Specifications
-
-### API Quality
-
-- Bean Validation
-- Global Exception Handling
-- Standardized API Responses
-
-### Documentation & Testing
-
-- Swagger/OpenAPI
-- JUnit 5
-- Mockito
-- MockMvc
+* Maven
 
 ---
 
-## 📈 Future Enhancements
+## 🚀 Development Roadmap
 
-- Profile Image Upload
-- Email Verification
-- Real-Time Notifications
-- WebSocket Messaging
-- Friend Recommendations
-- Redis Caching
-- Docker Deployment
-- CI/CD Pipeline
-- Microservices Architecture
+### Phase 1 — Networking Platform (Completed)
+
+✅ Authentication System
+
+✅ User Profiles
+
+✅ User Discovery
+
+✅ Connection Requests
+
+✅ Mutual Connections
+
+✅ User Statistics
+
+✅ Swagger Documentation
+
+---
+
+### Phase 2 — Social Content Platform (In Progress)
+
+🚧 Posts Module
+
+🚧 User Feed
+
+🚧 Post Management
+
+---
+
+### Phase 3 — Social Engagement
+
+🔜 Likes System
+
+🔜 Comments System
+
+🔜 Activity Feed
+
+🔜 Notifications
+
+---
+
+### Phase 4 — Real-Time Communication
+
+🔜 Messaging Module
+
+🔜 WebSocket Integration
+
+🔜 Real-Time Notifications
+
+---
+
+### Phase 5 — Production Enhancements
+
+🔜 Redis Caching
+
+🔜 Docker Deployment
+
+🔜 CI/CD Pipeline
+
+🔜 Monitoring & Logging
+
+🔜 Cloud Deployment
+
+---
+
+## 📈 Project Goals
+
+* Follow industry-standard backend practices
+* Design scalable REST APIs
+* Demonstrate enterprise Spring Boot development
+* Simulate real-world social networking systems
+* Build a production-ready portfolio project
 
 ---
 
 ## 👨‍💻 Author
 
-**Himanshu Bagga**
+Himanshu Bagga
 
-**Contact- 8448031291**
+Computer Science Engineering Student
 
-Computer Science Engineering Student  
 Java | Spring Boot | React | Data Structures & Algorithms
 
 ---
@@ -352,4 +268,4 @@ Java | Spring Boot | React | Data Structures & Algorithms
 
 🚧 Actively Under Development
 
-Building one feature at a time while following industry-standard backend development practices.
+Building a LinkedIn-inspired professional networking backend one module at a time.
