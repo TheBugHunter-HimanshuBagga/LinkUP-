@@ -3,6 +3,7 @@ package com.himanshu.LinkUP.controller;
 import com.himanshu.LinkUP.dto.MyConnectionResponse;
 import com.himanshu.LinkUP.dto.PendingRequestResponse;
 import com.himanshu.LinkUP.dto.SentRequestResponse;
+import com.himanshu.LinkUP.dto.UserSuggestionResponse;
 import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.service.ConnectionRequestService;
 import com.himanshu.LinkUP.service.ConnectionService;
@@ -80,4 +81,11 @@ public class ConnectionController {
         List<PendingRequestResponse> pendingRequestResponses = connectionRequestService.latestPendingRequest();
         return pendingRequestResponses;
     }
+
+    @GetMapping("/mutual/{userId}")
+    public List<UserSuggestionResponse> mutualConnection(@PathVariable Long userId){
+        List<UserSuggestionResponse> userSuggestionResponses = connectionService.mutualConnection(userId);
+        return userSuggestionResponses;
+    }
+
 }

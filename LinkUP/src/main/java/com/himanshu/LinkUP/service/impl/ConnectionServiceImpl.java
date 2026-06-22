@@ -2,6 +2,7 @@ package com.himanshu.LinkUP.service.impl;
 
 import com.himanshu.LinkUP.dto.MyConnectionResponse;
 import com.himanshu.LinkUP.dto.SentRequestResponse;
+import com.himanshu.LinkUP.dto.UserSuggestionResponse;
 import com.himanshu.LinkUP.entity.Connection;
 import com.himanshu.LinkUP.entity.ConnectionRequest;
 import com.himanshu.LinkUP.entity.User;
@@ -17,7 +18,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.Security;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -149,5 +152,92 @@ public class ConnectionServiceImpl implements ConnectionService {
         // find By sender
         List<ConnectionRequest> connectionRequests = connectionRequestRepository.findBySender(currentUser);
         return (long) connectionRequests.size();
+    }
+
+    @Override
+    public List<UserSuggestionResponse> mutualConnection(Long userId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(
+                        () -> new RuntimeException("CurrentUser Doesn't exists")
+                );
+
+        // if currentUser exists then check the userID i wanna get the mutual connection with
+        User toFindMutualConnectionWith = userRepository.findById(userId)
+                .orElseThrow(
+                        () -> new RuntimeException("User you are trying to find mutual connections with wasn't found")
+                );
+
+        if(currentUser.getId().equals(userId)){
+            throw new RuntimeException(
+                    "Cannot find mutual connections with yourself"
+            );
+        }
+
+        // if that user also exists then check weather currentUser has a connection with toFindMutualConnectionWith person only if he has accepted his connectionRequest
+        List<Connection> myConnections = connectionRepository.findByUser1OrUser2( // first currentUser will get the all his connection
+                currentUser,currentUser
+        );
+
+        List<Connection> otherConnections = connectionRepository.findByUser1OrUser2( // i got all the connections of the guy that currentUser want to find the mutual with
+                toFindMutualConnectionWith,toFindMutualConnectionWith
+        );
+
+        Set<Long> myConnectionIds = new HashSet<>();
+        Set<Long> otherConnectionIds = new HashSet<>();
+
+        for (Connection connection : myConnections) {
+
+            if (connection.getUser1().getId()
+                    .equals(currentUser.getId())) {
+
+                myConnectionIds.add(
+                        connection.getUser2().getId()
+                );
+
+            } else {
+
+                myConnectionIds.add(
+                        connection.getUser1().getId()
+                );
+            }
+        }
+
+        for (Connection connection : otherConnections) {
+
+            if (connection.getUser1().getId()
+                    .equals(toFindMutualConnectionWith.getId())) {
+
+                otherConnectionIds.add(
+                        connection.getUser2().getId()
+                );
+
+            } else {
+
+                otherConnectionIds.add(
+                        connection.getUser1().getId()
+                );
+            }
+        }
+
+        myConnectionIds.retainAll(otherConnectionIds);
+
+        return myConnectionIds.stream()
+                .map(id -> {
+                    User user = userRepository.findById(id)
+                            .orElseThrow(() ->
+                                    new RuntimeException(
+                                            "User not found"
+                                    )
+                            );
+
+                    return UserSuggestionResponse.builder()
+                            .id(user.getId())
+                            .fullName(user.getFullName())
+                            .build();
+                })
+                .toList();
+
     }
 }

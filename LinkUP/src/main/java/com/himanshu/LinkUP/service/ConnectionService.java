@@ -2,6 +2,7 @@ package com.himanshu.LinkUP.service;
 
 import com.himanshu.LinkUP.dto.MyConnectionResponse;
 import com.himanshu.LinkUP.dto.SentRequestResponse;
+import com.himanshu.LinkUP.dto.UserSuggestionResponse;
 
 import java.util.List;
 
@@ -13,4 +14,5 @@ public interface ConnectionService {
     String removeConnectionById(Long connectionId);
     Long pendingRequestCount();
     Long sentRequestCount();
+    List<UserSuggestionResponse> mutualConnection(Long userId);
 }
