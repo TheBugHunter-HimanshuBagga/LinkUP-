@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -45,5 +46,18 @@ public class PostServiceImpl implements PostService {
                 .authorName(savedPost.getAuthor().getFullName())
                 .createdAt(savedPost.getCreatedAt())
                 .build();
+    }
+
+    @Override
+    public List<PostResponse> getFeed(){
+        List<Post> posts = postRepository.findAll();
+        return posts.stream().map(
+                post -> PostResponse.builder()
+                        .id(post.getId())
+                        .content(post.getContent())
+                        .authorName(post.getAuthor().getFullName())
+                        .createdAt(post.getCreatedAt())
+                        .build()
+        ).toList();
     }
 }
