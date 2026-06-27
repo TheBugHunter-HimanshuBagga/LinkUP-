@@ -28,4 +28,10 @@ public class PostController {
         return postResponse;
     }
 
+    @GetMapping("/user/{userId}")
+    public List<PostResponse> getPostsByUser(@PathVariable Long userId){
+        List<PostResponse> postResponses = postService.getPostsByUser(userId);
+        return postResponses;
+    }
+
 }

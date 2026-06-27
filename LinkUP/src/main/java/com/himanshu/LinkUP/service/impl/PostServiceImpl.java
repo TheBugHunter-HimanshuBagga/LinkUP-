@@ -60,4 +60,25 @@ public class PostServiceImpl implements PostService {
                         .build()
         ).toList();
     }
+
+    @Override
+    public List<PostResponse> getPostsByUser(Long userId){
+        // This will be used to view someone's else profile . Hence no need to do the authentication
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("User Not Found")
+        ); // does that user exists which i want to see the feed for
+        // if the user is found hence
+        List<Post> posts = postRepository.findByAuthor(user);
+
+
+        return posts.stream().map(
+                post ->
+                        PostResponse.builder()
+                                .id(post.getId())
+                                .content(post.getContent())
+                                .authorName(post.getAuthor().getFullName())
+                                .createdAt(post.getCreatedAt())
+                                .build()
+        ).toList();
+    }
 }
