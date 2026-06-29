@@ -85,7 +85,13 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     public Long likeCount(Long postId){
-        return null;
+        Post post = postRepository.findById(postId)
+                .orElseThrow(
+                        () -> new RuntimeException("Post Not Found😅")
+                );
+        // if the post is found then
+        Long count = likeRepository.countByPost(post);
+        return count;
     }
 
 }
