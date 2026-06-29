@@ -200,11 +200,24 @@ The project follows a clean layered architecture focused on:
 
 ### Phase 2 — Social Content Platform (In Progress)
 
-🚧 Posts Module
+#### Posts
+- ✅ Create Post
+- ✅ View Feed
+- ✅ View User Posts
 
-🚧 User Feed
+#### Likes
+- ✅ Like Post
+- ✅ Unlike Post
+- ✅ Like Count
 
-🚧 Post Management
+#### Comments
+- 🚧 Create Comment
+- 🚧 View Comments
+- 🚧 Delete Comment
+
+#### Engagement
+- 🔜 Activity Feed
+- 🔜 Notifications
 
 ---
 
