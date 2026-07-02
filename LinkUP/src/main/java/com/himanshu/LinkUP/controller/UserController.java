@@ -7,6 +7,7 @@ import org.hibernate.type.ListType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -70,6 +71,11 @@ public class UserController {
         return ResponseEntity.ok(userStatsResponse);
     }
 
+    @PostMapping("/profile-picture")
+    public ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file){ // Take the part named as file from the request
+        String message = userService.uploadProfilePicture(file);
+        return ResponseEntity.ok(message);
+    }
 }
 
 

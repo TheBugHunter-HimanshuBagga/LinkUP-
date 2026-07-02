@@ -20,11 +20,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Security;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -265,5 +271,56 @@ public class UserServiceImpl implements UserService {
                 .pendingRequestCount(pendingRequestCount)
                 .sentRequestCount(sentRequestCount)
                 .build();
+    }
+
+    @Override
+    public String uploadProfilePicture(MultipartFile file) {
+
+        // Check if file is uploaded
+        if (file.isEmpty()) {
+            throw new RuntimeException("No file selected");
+        }
+
+        // Authenticate current user
+        Authentication authentication = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+
+        String email = authentication.getName();
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(
+                        () -> new RuntimeException("User not found")
+                );
+
+        // Generate unique file name
+        String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
+
+        // Upload folder
+        Path uploadPath = Paths.get("uploads/profile");
+
+        try {
+
+            // Create folder if it doesn't exist
+            Files.createDirectories(uploadPath);
+
+            // Copy file from request to uploads/profile
+            Files.copy(
+                    file.getInputStream(),
+                    uploadPath.resolve(fileName)
+            );
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload profile picture", e);
+        }
+
+        // Save image path in database
+        currentUser.setProfilePictureUrl(
+                "uploads/profile/" + fileName
+        );
+
+        userRepository.save(currentUser);
+
+        return "Profile picture uploaded successfully";
     }
 }

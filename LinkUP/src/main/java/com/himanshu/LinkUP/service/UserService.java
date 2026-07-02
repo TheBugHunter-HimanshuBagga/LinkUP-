@@ -3,6 +3,7 @@ package com.himanshu.LinkUP.service;
 import com.himanshu.LinkUP.dto.*;
 import com.himanshu.LinkUP.entity.User;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -35,4 +36,6 @@ public interface UserService {
     UserProfileResponse getMyProfile();
 
     UserStatsResponse getUserStats();
+
+    String uploadProfilePicture(MultipartFile file);
 }
