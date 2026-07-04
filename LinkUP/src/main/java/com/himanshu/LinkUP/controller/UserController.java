@@ -76,6 +76,13 @@ public class UserController {
         String message = userService.uploadProfilePicture(file);
         return ResponseEntity.ok(message);
     }
+
+    // Adding resume
+    @PostMapping("/resume")
+    public ResponseEntity<String> uploadResume(@RequestParam("file") MultipartFile file){
+        String message = userService.uploadResume(file);
+        return ResponseEntity.ok(message);
+    }
 }
 
 

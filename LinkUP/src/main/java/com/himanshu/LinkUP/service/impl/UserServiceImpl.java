@@ -323,4 +323,42 @@ public class UserServiceImpl implements UserService {
 
         return "Profile picture uploaded successfully";
     }
+
+
+    @Override
+    public String uploadResume(MultipartFile file){
+        if(file.isEmpty()){
+            throw new RuntimeException("ERROR!! Pls select the file");
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(
+                        () -> new RuntimeException("Current user not found")
+                );
+        String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
+        Path uploadPath = Paths.get("uploads/resume");
+        try {
+
+            // Create folder if it doesn't exist
+            Files.createDirectories(uploadPath);
+
+            // Copy file from request to uploads/profile
+            Files.copy(
+                    file.getInputStream(), // source
+                    uploadPath.resolve(fileName) // destination
+            );
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload resume", e);
+        }
+
+        currentUser.setResumeUrl(
+                "uploads/resume/" + fileName
+        );
+
+        userRepository.save(currentUser);
+
+        return "Resume Uploaded Successfully";
+    }
 }

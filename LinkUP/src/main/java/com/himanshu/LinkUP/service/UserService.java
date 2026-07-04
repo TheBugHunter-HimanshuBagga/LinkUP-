@@ -38,4 +38,6 @@ public interface UserService {
     UserStatsResponse getUserStats();
 
     String uploadProfilePicture(MultipartFile file);
+
+    String uploadResume(MultipartFile file);
 }

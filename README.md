@@ -380,7 +380,7 @@ DELETE  /api/posts/comments/{commentId}
 - 🔜 Activity Feed
 - ✅ Profile Image Upload
 - ✅ Document Upload
-- 🔜 Resume Upload
+- ✅ Resume Upload
 
 ---
 
