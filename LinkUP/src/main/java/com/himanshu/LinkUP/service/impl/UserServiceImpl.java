@@ -293,7 +293,7 @@ public class UserServiceImpl implements UserService {
                         () -> new RuntimeException("User not found")
                 );
 
-        // Generate unique file name
+        // Generate unique file name it will be random for every new file createda
         String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
 
         // Upload folder
@@ -306,8 +306,8 @@ public class UserServiceImpl implements UserService {
 
             // Copy file from request to uploads/profile
             Files.copy(
-                    file.getInputStream(),
-                    uploadPath.resolve(fileName)
+                    file.getInputStream(), // source
+                    uploadPath.resolve(fileName) // destination
             );
 
         } catch (IOException e) {

@@ -5,6 +5,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -48,4 +49,9 @@ public class User {
     private String profilePictureUrl;
 
     private LocalDateTime createdAt;
+
+    private String resumeUrl;
+
+    @OneToMany(mappedBy = "uploadedBy" , cascade = CascadeType.ALL)  //One user has many documents
+    private List<Document> documentList; // fetch all documents of the particular user fetch it
 }
