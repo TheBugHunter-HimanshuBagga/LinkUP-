@@ -1,7 +1,13 @@
 package com.himanshu.LinkUP.dto;
 
-import java.time.LocalDateTime;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDateTime;
+@Getter
+@Setter
+@Builder
 public class DocumentResponse {
     private Long id;
     private String title;
