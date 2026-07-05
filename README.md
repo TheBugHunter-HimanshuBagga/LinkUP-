@@ -376,8 +376,8 @@ DELETE  /api/posts/comments/{commentId}
 
 ## 🔜 Phase 3 — Professional Engagement
 
-- ✅ Notifications
-- 🔜 Activity Feed
+- ✅ Notifications - "Something happened to me."
+- 🚧 Activity Feed - "Something happened by someone."
 - ✅ Profile Image Upload
 - ✅ Document Upload
 - ✅ Resume Upload
