@@ -54,4 +54,7 @@ public class User {
 
     @OneToMany(mappedBy = "uploadedBy" , cascade = CascadeType.ALL)  //One user has many documents
     private List<Document> documentList; // fetch all documents of the particular user fetch it
+
+    @OneToMany(mappedBy = "recipient" , cascade = CascadeType.ALL) // one user can get many notifications
+    private List<Notification> notification; // fetch all notifications of the particular user using bidirectional relationships
 }
