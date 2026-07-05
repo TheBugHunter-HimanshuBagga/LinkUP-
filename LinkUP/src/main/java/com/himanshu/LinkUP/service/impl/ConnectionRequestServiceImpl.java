@@ -5,10 +5,12 @@ import com.himanshu.LinkUP.entity.Connection;
 import com.himanshu.LinkUP.entity.ConnectionRequest;
 import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.enums.ConnectionStatus;
+import com.himanshu.LinkUP.enums.NotificationType;
 import com.himanshu.LinkUP.repository.ConnectionRepository;
 import com.himanshu.LinkUP.repository.ConnectionRequestRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
 import com.himanshu.LinkUP.service.ConnectionRequestService;
+import com.himanshu.LinkUP.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
@@ -26,6 +28,7 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
     private final ConnectionRequestRepository connectionRequestRepository;
     private final ModelMapper modelMapper;
     private final ConnectionRepository connectionRepository;
+    private final NotificationService notificationService;
     @Override
     public void sendRequest(Long receiverId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -55,6 +58,10 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
                 .createdAt(LocalDateTime.now())
                 .build();
         connectionRequestRepository.save(request);
+
+        notificationService.createNotification(receiver,
+                sender.getFullName() + "sent you a connection request",
+                NotificationType.CONNECTION_REQUEST);
     }
 
 
@@ -106,6 +113,11 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
                 .build();
         connectionRequestRepository.save(request);
         connectionRepository.save(connection);
+
+        notificationService.createNotification(request.getSender(),
+                currentUser.getFullName() + "accepted your connection request",
+                NotificationType.CONNECTION_ACCEPTED);
+
         return "Request Accepted Successfully";
     }
 

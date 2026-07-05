@@ -3,10 +3,12 @@ package com.himanshu.LinkUP.service.impl;
 import com.himanshu.LinkUP.entity.Like;
 import com.himanshu.LinkUP.entity.Post;
 import com.himanshu.LinkUP.entity.User;
+import com.himanshu.LinkUP.enums.NotificationType;
 import com.himanshu.LinkUP.repository.LikeRepository;
 import com.himanshu.LinkUP.repository.PostRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
 import com.himanshu.LinkUP.service.LikeService;
+import com.himanshu.LinkUP.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +22,7 @@ public class LikeServiceImpl implements LikeService {
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final NotificationService notificationService;
 
     @Override
     public String likePost(Long postId){
@@ -54,6 +57,12 @@ public class LikeServiceImpl implements LikeService {
                 .createdAt(LocalDateTime.now())
                 .build();
         likeRepository.save(like); // save the like
+
+        if(!post.getAuthor().getId().equals(currentUser.getId())){ // i won't get the notification when i liked my own post
+            notificationService.createNotification(post.getAuthor(),
+                    currentUser.getFullName() + "liked your post." ,
+                    NotificationType.POST_LIKED);
+        }
 
         return "Post Liked Successfully!";
     }

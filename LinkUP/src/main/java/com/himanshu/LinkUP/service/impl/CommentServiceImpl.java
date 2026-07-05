@@ -5,10 +5,12 @@ import com.himanshu.LinkUP.dto.CreateCommentRequest;
 import com.himanshu.LinkUP.entity.Comment;
 import com.himanshu.LinkUP.entity.Post;
 import com.himanshu.LinkUP.entity.User;
+import com.himanshu.LinkUP.enums.NotificationType;
 import com.himanshu.LinkUP.repository.CommentRepository;
 import com.himanshu.LinkUP.repository.PostRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
 import com.himanshu.LinkUP.service.CommentService;
+import com.himanshu.LinkUP.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
@@ -24,7 +26,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final ModelMapper modelMapper;
+    private final NotificationService notificationService;
     @Override
     public String addComment(Long postId, CreateCommentRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -49,6 +51,15 @@ public class CommentServiceImpl implements CommentService {
 
         // save this post(comment) inside the CommentRepository
         commentRepository.save(comment);
+
+
+        if(!post.getAuthor().getId().equals(currentUser.getId())){ //  i won't get any notification if io posted comment on mine post only
+            notificationService.createNotification(post.getAuthor(),
+                    currentUser.getFullName() + "commented on your post.",
+                    NotificationType.POST_COMMENTED);
+        }
+
+
         return "Comment posted successfully";
     }
 
