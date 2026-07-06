@@ -4,8 +4,10 @@ import com.himanshu.LinkUP.dto.CreatePostRequest;
 import com.himanshu.LinkUP.dto.PostResponse;
 import com.himanshu.LinkUP.entity.Post;
 import com.himanshu.LinkUP.entity.User;
+import com.himanshu.LinkUP.enums.ActivityType;
 import com.himanshu.LinkUP.repository.PostRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
+import com.himanshu.LinkUP.service.ActivityService;
 import com.himanshu.LinkUP.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -20,6 +22,7 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final ActivityService activityService;
     @Override
     public PostResponse createPost(CreatePostRequest request){
 
@@ -39,6 +42,12 @@ public class PostServiceImpl implements PostService {
                 .build();
 
         Post savedPost = postRepository.save(post);
+
+        activityService.createActivity(
+                currentUser,
+                "Created a new post.",
+                ActivityType.POST_CREATED
+        );
 
         return PostResponse.builder()
                 .id(savedPost.getId())

@@ -4,11 +4,13 @@ import com.himanshu.LinkUP.dto.PendingRequestResponse;
 import com.himanshu.LinkUP.entity.Connection;
 import com.himanshu.LinkUP.entity.ConnectionRequest;
 import com.himanshu.LinkUP.entity.User;
+import com.himanshu.LinkUP.enums.ActivityType;
 import com.himanshu.LinkUP.enums.ConnectionStatus;
 import com.himanshu.LinkUP.enums.NotificationType;
 import com.himanshu.LinkUP.repository.ConnectionRepository;
 import com.himanshu.LinkUP.repository.ConnectionRequestRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
+import com.himanshu.LinkUP.service.ActivityService;
 import com.himanshu.LinkUP.service.ConnectionRequestService;
 import com.himanshu.LinkUP.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
     private final ModelMapper modelMapper;
     private final ConnectionRepository connectionRepository;
     private final NotificationService notificationService;
+    private final ActivityService activityService;
     @Override
     public void sendRequest(Long receiverId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -113,6 +116,12 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
                 .build();
         connectionRequestRepository.save(request);
         connectionRepository.save(connection);
+
+        activityService.createActivity(
+                currentUser,
+                "Connected with: " + request.getSender().getFullName(),
+                ActivityType.CONNECTION_CREATED
+        );
 
         notificationService.createNotification(request.getSender(),
                 currentUser.getFullName() + "accepted your connection request",

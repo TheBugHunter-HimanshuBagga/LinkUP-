@@ -3,8 +3,10 @@ package com.himanshu.LinkUP.service.impl;
 import com.himanshu.LinkUP.dto.DocumentResponse;
 import com.himanshu.LinkUP.entity.Document;
 import com.himanshu.LinkUP.entity.User;
+import com.himanshu.LinkUP.enums.ActivityType;
 import com.himanshu.LinkUP.repository.DocumentRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
+import com.himanshu.LinkUP.service.ActivityService;
 import com.himanshu.LinkUP.service.DocumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -25,7 +27,7 @@ import java.util.UUID;
 public class DocumentServiceImpl implements DocumentService {
     private final DocumentRepository documentRepository;
     private final UserRepository userRepository;
-
+    private final ActivityService activityService;
     @Override
     public String uploadDocument(MultipartFile file, String title){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -67,6 +69,13 @@ public class DocumentServiceImpl implements DocumentService {
                 .build();
 
         documentRepository.save(document);
+
+        activityService.createActivity(
+                currentUser,
+                "Uploaded a new document.",
+                ActivityType.DOCUMENT_UPLOADED
+        );
+
         return "Document Uploaded Successfully";
     }
 

@@ -15,3 +15,11 @@ public interface ActivityService {
 
     List<ActivityResponse> getActivityFeed();
 }
+/*
+This will be integrated inside the
+
+when post is generated -> postService
+document is uploaded
+resume is uploaded
+connection is made with someone
+ */

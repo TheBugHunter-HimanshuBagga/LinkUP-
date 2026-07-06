@@ -4,14 +4,12 @@ import com.himanshu.LinkUP.dto.*;
 import com.himanshu.LinkUP.entity.Connection;
 import com.himanshu.LinkUP.entity.ConnectionRequest;
 import com.himanshu.LinkUP.entity.User;
+import com.himanshu.LinkUP.enums.ActivityType;
 import com.himanshu.LinkUP.enums.ConnectionStatus;
 import com.himanshu.LinkUP.repository.ConnectionRepository;
 import com.himanshu.LinkUP.repository.ConnectionRequestRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
-import com.himanshu.LinkUP.service.AuthService;
-import com.himanshu.LinkUP.service.ConnectionRequestService;
-import com.himanshu.LinkUP.service.ConnectionService;
-import com.himanshu.LinkUP.service.UserService;
+import com.himanshu.LinkUP.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +36,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ConnectionRepository connectionRepository;
     private final ConnectionRequestRepository connectionRequestRepository;
+    private final ActivityService activityService;
     @Override
     public Page<UserResponse> discoverUser(int page, int size , String sortBy , String direction) {
         Sort sort =
@@ -358,6 +357,12 @@ public class UserServiceImpl implements UserService {
         );
 
         userRepository.save(currentUser);
+
+        activityService.createActivity(
+                currentUser, // who created this activity
+                "Uploaded a new resume.",
+                ActivityType.RESUME_UPLOADED
+        );
 
         return "Resume Uploaded Successfully";
     }

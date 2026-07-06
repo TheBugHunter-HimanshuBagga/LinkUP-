@@ -374,13 +374,42 @@ DELETE  /api/posts/comments/{commentId}
 
 ---
 
-## 🔜 Phase 3 — Professional Engagement
+## ✅ Phase 3 — Professional Engagement
 
 - ✅ Notifications - "Something happened to me."
-- 🚧 Activity Feed - "Something happened by someone."
+- ✅ Activity Feed - "Something happened by someone."
 - ✅ Profile Image Upload
 - ✅ Document Upload
 - ✅ Resume Upload
+
+## 🏗️ High-Level Architecture
+
+```mermaid
+graph TD
+
+    A[Authentication & Security]
+
+    B[Social Module]
+    B1[Posts]
+    B2[Likes]
+    B3[Comments]
+
+    C[Professional Module]
+    C1[Profile Picture]
+    C2[Document Upload]
+    C3[Resume Upload]
+
+    D[Notification Service]
+    E[Activity Service]
+
+    B --> D
+    B --> E
+
+    C --> E
+
+    A --> B
+    A --> C
+```
 
 ---
 
