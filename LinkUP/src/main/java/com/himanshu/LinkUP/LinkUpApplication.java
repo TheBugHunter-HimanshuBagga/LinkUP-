@@ -13,8 +13,7 @@ public class LinkUpApplication {
 }
 
 /*
-
-                                                            Profile Image Upload WorkFlow
+                                        Profile Image Upload WorkFlow
 
 On LinkedIn
 Edit Profile -> Upload Profile Picture -> Choose image.jpg -> click Save

@@ -21,7 +21,7 @@ public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
     @Override
-    public String sendMessage(SendMessageRequest request){
+    public Message sendMessage(SendMessageRequest request){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -51,11 +51,11 @@ public class MessageServiceImpl implements MessageService {
                 .sentAt(LocalDateTime.now())
                 .build();
 
-        messageRepository.save(message);
+
 
         // WEBSOCKET LATER
 
-        return "Message sent successfully";
+        return messageRepository.save(message);
     }
 
     @Override
@@ -89,5 +89,36 @@ public class MessageServiceImpl implements MessageService {
                 )
                 .toList();
 
+    }
+
+    @Override
+    public Message sendWebSocketMessage(String email, SendMessageRequest request) {
+        // Logged-in user (obtained from Principal)
+        User sender = userRepository.findByEmail(email)
+                .orElseThrow(
+                        () -> new RuntimeException("Sender doesn't exist")
+                );
+
+        // Receiver
+        User receiver = userRepository.findById(request.getReceiverId())
+                .orElseThrow(
+                        () -> new RuntimeException("Receiver not found")
+                );
+
+        // Cannot send message to yourself
+        if (sender.getId().equals(receiver.getId())) {
+            throw new RuntimeException(
+                    "You cannot send message to yourself"
+            );
+        }
+
+        Message message = Message.builder()
+                .content(request.getContent())
+                .sender(sender)
+                .receiver(receiver)
+                .sentAt(LocalDateTime.now())
+                .build();
+
+        return messageRepository.save(message);
     }
 }

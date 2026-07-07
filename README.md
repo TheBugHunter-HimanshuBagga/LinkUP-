@@ -413,12 +413,45 @@ graph TD
 
 ---
 
-## 🚧 Phase 4 — Real-Time Features
+## ✅ Phase 4 — Real-Time Features
 
 - ✅ Direct Messaging
-- WebSocket Integration
-- Real-Time Notifications
+- ✅ WebSocket Integration
+- ✅ Real-Time Notifications
+- ✅ Private Messaging
+- ✅ Messaging BroadCasting
 
+```text
+                 🔐 JWT Authentication
+                         │
+                         ▼
+              WebSocket Handshake (/ws)
+                         │
+                         ▼
+                  STOMP Message Broker
+          ┌──────────────┴──────────────┐
+          │                             │
+          ▼                             ▼
+     📢 /topic/*                  📩 /user/queue/*
+ (Broadcast Messages)        (Private User Messages)
+          │                             │
+          ▼                             ▼
+   Activity Updates              One-to-One Chat
+   Live Notifications           Direct Messaging
+          │                             │
+          └──────────────┬──────────────┘
+                         ▼
+               ⚡ Instant Real-Time Delivery
+```
+
+### 🚀 Implemented Features
+
+- 💬 Direct One-to-One Messaging
+- ⚡ WebSocket Integration using STOMP
+- 🔔 Real-Time Notifications
+- 📩 Private User Messaging (`/queue`)
+- 📢 Broadcast Messaging (`/topic`)
+- 🔐 JWT Secured WebSocket Sessions
 ---
 
 ## 🔜 Phase 5 — Production Readiness

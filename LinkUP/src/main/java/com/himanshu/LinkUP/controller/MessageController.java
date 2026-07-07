@@ -20,8 +20,8 @@ public class MessageController {
     // send a message
     @PostMapping
     public ResponseEntity<String> sendMessage(@RequestBody SendMessageRequest request){
-        String message = messageService.sendMessage(request);
-        return ResponseEntity.ok(message);
+        messageService.sendMessage(request);
+        return ResponseEntity.ok("Message sent successfully");
     }
 
     // get conversation with another user
