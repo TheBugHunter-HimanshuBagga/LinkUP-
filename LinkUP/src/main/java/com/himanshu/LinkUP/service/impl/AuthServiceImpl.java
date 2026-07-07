@@ -5,6 +5,9 @@ import com.himanshu.LinkUP.dto.LoginResponse;
 import com.himanshu.LinkUP.dto.RegisterRequest;
 import com.himanshu.LinkUP.dto.RegisterResponse;
 import com.himanshu.LinkUP.entity.User;
+import com.himanshu.LinkUP.exception.BadRequestException;
+import com.himanshu.LinkUP.exception.ResourceNotFoundException;
+import com.himanshu.LinkUP.exception.UnauthorizedException;
 import com.himanshu.LinkUP.repository.UserRepository;
 import com.himanshu.LinkUP.security.JwtService;
 import com.himanshu.LinkUP.service.AuthService;
@@ -25,7 +28,7 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public RegisterResponse response(RegisterRequest request){
         if(userRepository.findByEmail(request.getEmail()).isPresent()){
-            throw new RuntimeException("Email is already existing");
+            throw new BadRequestException("Email is already registered"); // 400
         }
         User user = User.builder()
                 .fullName(request.getFullName())
@@ -55,7 +58,7 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public LoginResponse login(LoginRequest request){
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
-                () -> new RuntimeException("User not found")
+                () -> new ResourceNotFoundException("User not found") // 404
         );
 
         // if user is found then
@@ -64,7 +67,7 @@ public class AuthServiceImpl implements AuthService{
                 user.getPassword()
         );
         if(!isValid){
-            throw new RuntimeException("Invalid Password (●'◡'●)");
+            throw new UnauthorizedException("Invalid email or Password (●'◡'●)"); // 401
         }
 
         String token = jwtService.generateToken(user);

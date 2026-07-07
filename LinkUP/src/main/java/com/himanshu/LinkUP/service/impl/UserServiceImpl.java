@@ -6,6 +6,8 @@ import com.himanshu.LinkUP.entity.ConnectionRequest;
 import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.enums.ActivityType;
 import com.himanshu.LinkUP.enums.ConnectionStatus;
+import com.himanshu.LinkUP.exception.BadRequestException;
+import com.himanshu.LinkUP.exception.ResourceNotFoundException;
 import com.himanshu.LinkUP.repository.ConnectionRepository;
 import com.himanshu.LinkUP.repository.ConnectionRequestRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
@@ -79,7 +81,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserProfileResponse getUserProfile(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User Not Found")
+                () -> new ResourceNotFoundException("User Not Found")
         );
         Long connection = (long) connectionRepository.findByUser1OrUser2(user,user).size();
         return UserProfileResponse.builder()
@@ -118,7 +120,7 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User do not exists"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         // if user exists then , let them put the data
         // if user just want one field to be updated
         if(updateProfileRequest.getBio() != null){
@@ -159,8 +161,8 @@ public class UserServiceImpl implements UserService {
         User currentUser =
                 userRepository.findByEmail(email)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "User does not exist"
+                                new ResourceNotFoundException(
+                                        "User not found"
                                 )
                         );
 
@@ -236,7 +238,7 @@ public class UserServiceImpl implements UserService {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("User doesn't exists")
+                        () -> new ResourceNotFoundException("User not found")
                 );
 
         Long connectionCount = (long) connectionRepository.findByUser1OrUser2(currentUser,currentUser).size();
@@ -256,7 +258,7 @@ public class UserServiceImpl implements UserService {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("currentUser doesn't exists")
+                        () -> new ResourceNotFoundException("User not found")
                 );
 
         Long connectionCount = (long) connectionRepository.findByUser1OrUser2(currentUser,currentUser).size();
@@ -277,7 +279,7 @@ public class UserServiceImpl implements UserService {
 
         // Check if file is uploaded
         if (file.isEmpty()) {
-            throw new RuntimeException("No file selected");
+            throw new BadRequestException("No file selected");
         }
 
         // Authenticate current user
@@ -289,7 +291,7 @@ public class UserServiceImpl implements UserService {
 
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("User not found")
+                        () -> new ResourceNotFoundException("User not found")
                 );
 
         // Generate unique file name it will be random for every new file createda
@@ -327,13 +329,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public String uploadResume(MultipartFile file){
         if(file.isEmpty()){
-            throw new RuntimeException("ERROR!! Pls select the file");
+            throw new BadRequestException("ERROR!! Please select the file");
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("Current user not found")
+                        () -> new ResourceNotFoundException("User not found")
                 );
         String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
         Path uploadPath = Paths.get("uploads/resume");
