@@ -4,6 +4,9 @@ import com.himanshu.LinkUP.dto.DocumentResponse;
 import com.himanshu.LinkUP.entity.Document;
 import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.enums.ActivityType;
+import com.himanshu.LinkUP.exception.BadRequestException;
+import com.himanshu.LinkUP.exception.ForbiddenException;
+import com.himanshu.LinkUP.exception.ResourceNotFoundException;
 import com.himanshu.LinkUP.repository.DocumentRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
 import com.himanshu.LinkUP.service.ActivityService;
@@ -34,10 +37,10 @@ public class DocumentServiceImpl implements DocumentService {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("Current User not found")
+                        () -> new ResourceNotFoundException("User not found")
                 );
         if(file.isEmpty()){
-            throw new RuntimeException("ERROR!!!  No file selected");
+            throw new BadRequestException("No file selected");
         }
 
         String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
@@ -85,7 +88,7 @@ public class DocumentServiceImpl implements DocumentService {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("Current user not found")
+                        () -> new ResourceNotFoundException("User not found")
                 );
         return documentRepository.findByUploadedBy(currentUser)
                 .stream()
@@ -103,15 +106,15 @@ public class DocumentServiceImpl implements DocumentService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("Current User Not Found")
+                () -> new ResourceNotFoundException("User Not Found")
         );
         // document should also exists
         Document document = documentRepository.findById(documentId).orElseThrow(
-                () -> new RuntimeException("Document not found")
+                () -> new ResourceNotFoundException("Document not found")
         );
 
         if(!document.getUploadedBy().getId().equals(currentUser.getId())){
-            throw new RuntimeException(
+            throw new ForbiddenException(
                     "You are not authorized to delete this document"
             );
         }

@@ -4,6 +4,8 @@ import com.himanshu.LinkUP.entity.Like;
 import com.himanshu.LinkUP.entity.Post;
 import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.enums.NotificationType;
+import com.himanshu.LinkUP.exception.BadRequestException;
+import com.himanshu.LinkUP.exception.ResourceNotFoundException;
 import com.himanshu.LinkUP.repository.LikeRepository;
 import com.himanshu.LinkUP.repository.PostRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
@@ -38,16 +40,16 @@ public class LikeServiceImpl implements LikeService {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("Current User Not Found!")
+                        () -> new ResourceNotFoundException("User not found!")
                 );
         Post post = postRepository.findById(postId)
                 .orElseThrow(
-                        () -> new RuntimeException("Post doesn't Exists")
+                        () -> new ResourceNotFoundException("Post not found")
                 );
 
         // if user Liked already
         if(likeRepository.existsByUserAndPost(currentUser,post)){
-            throw new RuntimeException("You have already liked this post");
+            throw new BadRequestException("You have already liked this post");
         }
 
         // if not Liked then build
@@ -73,20 +75,20 @@ public class LikeServiceImpl implements LikeService {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("Current User doesn't exists")
+                        () -> new ResourceNotFoundException("User not found")
                 );
         Post post = postRepository.findById(postId)
                 .orElseThrow(
-                        () -> new RuntimeException("Post Not Found")
+                        () -> new ResourceNotFoundException("Post not found")
                 );
         // if not liked Already
         if(!likeRepository.existsByUserAndPost(currentUser,post)){
-            throw new RuntimeException("You haven't Liked this Post, So U can't unlike this");
+            throw new BadRequestException("You have not liked this post");
         }
 
         // if Liked
         Like like = likeRepository.findByUserAndPost(currentUser,post).orElseThrow(
-                () -> new RuntimeException("Like not found")
+                () -> new ResourceNotFoundException("Like not found")
         );
         likeRepository.delete(like);
         return "Post Unliked Successfully";
@@ -96,7 +98,7 @@ public class LikeServiceImpl implements LikeService {
     public Long likeCount(Long postId){
         Post post = postRepository.findById(postId)
                 .orElseThrow(
-                        () -> new RuntimeException("Post Not Found😅")
+                        () -> new ResourceNotFoundException("Post not found")
                 );
         // if the post is found then
         Long count = likeRepository.countByPost(post);

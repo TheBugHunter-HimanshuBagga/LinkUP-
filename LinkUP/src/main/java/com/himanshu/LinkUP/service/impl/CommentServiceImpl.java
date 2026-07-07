@@ -6,6 +6,8 @@ import com.himanshu.LinkUP.entity.Comment;
 import com.himanshu.LinkUP.entity.Post;
 import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.enums.NotificationType;
+import com.himanshu.LinkUP.exception.ForbiddenException;
+import com.himanshu.LinkUP.exception.ResourceNotFoundException;
 import com.himanshu.LinkUP.repository.CommentRepository;
 import com.himanshu.LinkUP.repository.PostRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
@@ -34,12 +36,12 @@ public class CommentServiceImpl implements CommentService {
         // CurrentUser should be existing to post the comment
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("Current user not found")
+                        () -> new ResourceNotFoundException("User not found")
                 );
         // Post to be commented on should alos be existing
         Post post = postRepository.findById(postId)
                 .orElseThrow(
-                        () -> new RuntimeException("Post Not Found on which you wanted to commebnt")
+                        () -> new ResourceNotFoundException("Post not found")
                 );
         // if all perfect then
         Comment comment = Comment.builder()
@@ -55,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
 
         if(!post.getAuthor().getId().equals(currentUser.getId())){ //  i won't get any notification if io posted comment on mine post only
             notificationService.createNotification(post.getAuthor(),
-                    currentUser.getFullName() + "commented on your post.",
+                    currentUser.getFullName() + " commented on your post.",
                     NotificationType.POST_COMMENTED);
         }
 
@@ -68,7 +70,7 @@ public class CommentServiceImpl implements CommentService {
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(
-                        () -> new RuntimeException("Post not found")
+                        () -> new ResourceNotFoundException("Post not found")
                 );
 
         return commentRepository.findByPost(post) // since from here i will be getting the list i will break it like [stream().map().toList()]
@@ -91,16 +93,16 @@ public class CommentServiceImpl implements CommentService {
         // CurrentUser should be existing to post the comment
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("Current user not found")
+                        () -> new ResourceNotFoundException("User not found")
                 );
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(
-                        ()-> new RuntimeException("comment not found")
+                        ()-> new ResourceNotFoundException("Comment not found")
                 );
 
         if(!comment.getUser().getId().equals(currentUser.getId())){
-            throw new RuntimeException(
+            throw new ForbiddenException(
                     "You are not authorized to delete this comment"
             );
         }

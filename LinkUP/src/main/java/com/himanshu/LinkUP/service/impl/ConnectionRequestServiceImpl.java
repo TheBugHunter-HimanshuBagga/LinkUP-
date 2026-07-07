@@ -7,6 +7,9 @@ import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.enums.ActivityType;
 import com.himanshu.LinkUP.enums.ConnectionStatus;
 import com.himanshu.LinkUP.enums.NotificationType;
+import com.himanshu.LinkUP.exception.BadRequestException;
+import com.himanshu.LinkUP.exception.ForbiddenException;
+import com.himanshu.LinkUP.exception.ResourceNotFoundException;
 import com.himanshu.LinkUP.repository.ConnectionRepository;
 import com.himanshu.LinkUP.repository.ConnectionRequestRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
@@ -28,7 +31,6 @@ import java.util.List;
 public class ConnectionRequestServiceImpl implements ConnectionRequestService {
     private final UserRepository userRepository;
     private final ConnectionRequestRepository connectionRequestRepository;
-    private final ModelMapper modelMapper;
     private final ConnectionRepository connectionRepository;
     private final NotificationService notificationService;
     private final ActivityService activityService;
@@ -37,21 +39,21 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User sender = userRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("User Not Exists")
+                () -> new ResourceNotFoundException("User Not Exists")
         );
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() ->
-                        new RuntimeException("The Person you are trying to send the request does not Exists")
+                        new ResourceNotFoundException("Receiver not found")
                         );
         // what if the user send request to himself
         if(sender.getId().equals(receiver.getId())){
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "You can't send request to yourself"
             );
         }
         if(connectionRequestRepository.existsBySenderAndReceiver(sender , receiver)){
-            throw new RuntimeException(
-                    "Request already sent"
+            throw new BadRequestException(
+                    "Connection request already sent"
             );
         }
         ConnectionRequest request = ConnectionRequest.builder()
@@ -63,7 +65,7 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         connectionRequestRepository.save(request);
 
         notificationService.createNotification(receiver,
-                sender.getFullName() + "sent you a connection request",
+                sender.getFullName() + " sent you a connection request",
                 NotificationType.CONNECTION_REQUEST);
     }
 
@@ -73,7 +75,7 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User receiver = userRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("Receiver Not Found")
+                () -> new ResourceNotFoundException("User not found")
         );
         List<ConnectionRequest> requests = connectionRequestRepository.findByReceiverAndStatus(receiver , ConnectionStatus.PENDING);
         return requests.stream()
@@ -92,20 +94,20 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new RuntimeException("User Not Found")
+                        new ResourceNotFoundException("User Not Found")
                         );
         ConnectionRequest request = connectionRequestRepository.findById(requestId)
                 .orElseThrow(() ->
-                        new RuntimeException("Request Not Found")
+                        new ResourceNotFoundException("Connection request not found")
                         );
         if(!request.getReceiver().getId().equals(currentUser.getId())){
-            throw new RuntimeException(
+            throw new ForbiddenException(
                     "You are not authorized to accept the request"
             );
         }
         if(request.getStatus() != ConnectionStatus.PENDING){
-            throw new RuntimeException(
-                    "Request is already processed"
+            throw new BadRequestException(
+                    "Request has already been processed"
             );
         }
         request.setStatus(ConnectionStatus.ACCEPTED);
@@ -124,7 +126,7 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         );
 
         notificationService.createNotification(request.getSender(),
-                currentUser.getFullName() + "accepted your connection request",
+                currentUser.getFullName() + " accepted your connection request",
                 NotificationType.CONNECTION_ACCEPTED);
 
         return "Request Accepted Successfully";
@@ -135,20 +137,20 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // Himank
         String email = authentication.getName(); // HImank
         User currentUser = userRepository.findByEmail(email).orElseThrow(// Himank
-                () -> new RuntimeException("User does not exists")
+                () -> new ResourceNotFoundException("User not found")
         );
         ConnectionRequest request = connectionRequestRepository.findById(receiverId)
                 .orElseThrow(() ->
-                        new RuntimeException("Request Not Found") // himanshu request found
+                        new ResourceNotFoundException("Connection request not found") // himanshu request found
                 );
         if(!request.getReceiver().getId().equals(currentUser.getId())){ // HITTT
-            throw new RuntimeException(
+            throw new ForbiddenException(
                     "You are not authorized to reject the request"
             );
         }
         // check weather the status is pending
         if(request.getStatus() != ConnectionStatus.PENDING){
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Request is already processed"
             );
         }
@@ -163,7 +165,7 @@ public class ConnectionRequestServiceImpl implements ConnectionRequestService {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("CurrentUser doesn't exists")
+                        () -> new ResourceNotFoundException("User not found")
                 );
         List<ConnectionRequest> connectionRequests = connectionRequestRepository.findByReceiverAndStatus(currentUser,ConnectionStatus.PENDING);
 

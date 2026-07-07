@@ -7,6 +7,9 @@ import com.himanshu.LinkUP.entity.Connection;
 import com.himanshu.LinkUP.entity.ConnectionRequest;
 import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.enums.ConnectionStatus;
+import com.himanshu.LinkUP.exception.BadRequestException;
+import com.himanshu.LinkUP.exception.ForbiddenException;
+import com.himanshu.LinkUP.exception.ResourceNotFoundException;
 import com.himanshu.LinkUP.repository.ConnectionRepository;
 import com.himanshu.LinkUP.repository.ConnectionRequestRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
@@ -33,7 +36,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("User Not Found")
+                () -> new ResourceNotFoundException("User not found")
         );
         List<Connection> connections = connectionRepository.findByUser1OrUser2(currentUser , currentUser);
 
@@ -59,18 +62,18 @@ public class ConnectionServiceImpl implements ConnectionService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("User not Found!!")
+                () -> new ResourceNotFoundException("User not found")
         );
         ConnectionRequest request = connectionRequestRepository.findById(requestId).orElseThrow(
-                () -> new RuntimeException("Request Not Found")
+                () -> new ResourceNotFoundException("Connection request not found")
         );
         if(!request.getSender().getId().equals(currentUser.getId())){
-            throw new RuntimeException(
-                    "You are not authorized to withdraw the request"
+            throw new ForbiddenException(
+                    "You are not authorized to withdraw this request"
             );
         }
         if(request.getStatus() != ConnectionStatus.PENDING){
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Only Pending request can be withdrawn, Your request was already processed"
             );
         }
@@ -83,7 +86,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("Current User Not Found")
+                () -> new ResourceNotFoundException("User not found")
         );
         // to see the sent Request i need to check it from the ConnectionRequest
         List<ConnectionRequest> requests = connectionRequestRepository.findBySender(currentUser);
@@ -102,7 +105,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("Current User not exists")
+                () -> new ResourceNotFoundException("User not found")
         );
         List<Connection> connections = connectionRepository.findByUser1OrUser2(currentUser , currentUser);
         return (long) connections.size();
@@ -113,15 +116,15 @@ public class ConnectionServiceImpl implements ConnectionService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("Current User Not exists")
+                () -> new ResourceNotFoundException("User not found")
         );
         Connection connection = connectionRepository.findById(connectionId).orElseThrow(
-                () -> new RuntimeException("Connection does not exists")
+                () -> new ResourceNotFoundException("Connection not exists")
         );
         if(!connection.getUser1().getId().equals(currentUser.getId())
         && !connection.getUser2().getId().equals(currentUser.getId())
         ){
-            throw new RuntimeException(
+            throw new ForbiddenException(
                 "You are not authorized to remove this connection"
             );
         }
@@ -135,7 +138,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User doesn't exists"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         // if exists
         List<ConnectionRequest> connectionRequest = connectionRequestRepository.findByReceiverAndStatus(currentUser,ConnectionStatus.PENDING);
         return (long) connectionRequest.size();
@@ -147,7 +150,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("User doesn't exists")
+                        () -> new ResourceNotFoundException("User not found")
                 );
         // find By sender
         List<ConnectionRequest> connectionRequests = connectionRequestRepository.findBySender(currentUser);
@@ -160,17 +163,17 @@ public class ConnectionServiceImpl implements ConnectionService {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("CurrentUser Doesn't exists")
+                        () -> new ResourceNotFoundException("User not found")
                 );
 
         // if currentUser exists then check the userID i wanna get the mutual connection with
         User toFindMutualConnectionWith = userRepository.findById(userId)
                 .orElseThrow(
-                        () -> new RuntimeException("User you are trying to find mutual connections with wasn't found")
+                        () -> new ResourceNotFoundException("User not found")
                 );
 
         if(currentUser.getId().equals(userId)){
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Cannot find mutual connections with yourself"
             );
         }
@@ -227,7 +230,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                 .map(id -> {
                     User user = userRepository.findById(id)
                             .orElseThrow(() ->
-                                    new RuntimeException(
+                                    new ResourceNotFoundException(
                                             "User not found"
                                     )
                             );

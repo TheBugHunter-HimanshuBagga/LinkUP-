@@ -4,6 +4,8 @@ import com.himanshu.LinkUP.dto.NotificationResponse;
 import com.himanshu.LinkUP.entity.Notification;
 import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.enums.NotificationType;
+import com.himanshu.LinkUP.exception.ForbiddenException;
+import com.himanshu.LinkUP.exception.ResourceNotFoundException;
 import com.himanshu.LinkUP.repository.NotificationRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
 import com.himanshu.LinkUP.service.NotificationService;
@@ -39,7 +41,7 @@ public class NotificationServiceImpl implements NotificationService {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("Current user not found")
+                        () -> new ResourceNotFoundException("User not found")
                 );
 
         // no if the currentUser is existing then
@@ -66,18 +68,18 @@ public class NotificationServiceImpl implements NotificationService {
         // User should be present
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("currentUser not found")
+                        () -> new ResourceNotFoundException("User not found")
                 );
 
         // to marked as read notifications should be present
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(
-                        () -> new RuntimeException("No notifications exists with this Id")
+                        () -> new ResourceNotFoundException("Notification not found")
                 );
 
         // if everuthing is fine hence
         if(!notification.getRecipient().getId().equals(currentUser.getId())){
-            throw new RuntimeException("You are not authorized tto access this notification");
+            throw new ForbiddenException("You are not authorized to access this notification");
         }
 
         notification.setRead(true);
@@ -92,17 +94,17 @@ public class NotificationServiceImpl implements NotificationService {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("CurrentUser not found")
+                        () -> new ResourceNotFoundException("User not found")
                 );
 
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(
-                        () -> new RuntimeException("Notification does not exists")
+                        () -> new ResourceNotFoundException("Notification not found")
                 );
 
         // does this notification belongs to the logged-in user
         if(!notification.getRecipient().getId().equals(currentUser.getId())){
-            throw new RuntimeException("You are not authorized to delete this notification");
+            throw new ForbiddenException("You are not authorized to delete this notification");
         }
 
         // if existing then

@@ -5,6 +5,7 @@ import com.himanshu.LinkUP.dto.PostResponse;
 import com.himanshu.LinkUP.entity.Post;
 import com.himanshu.LinkUP.entity.User;
 import com.himanshu.LinkUP.enums.ActivityType;
+import com.himanshu.LinkUP.exception.ResourceNotFoundException;
 import com.himanshu.LinkUP.repository.PostRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
 import com.himanshu.LinkUP.service.ActivityService;
@@ -31,7 +32,7 @@ public class PostServiceImpl implements PostService {
 
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("Current User not Found")
+                        () -> new ResourceNotFoundException("User not found")
                 );
 
         // if the user is found in the DB then make a builder entity hence save it inside the github
@@ -74,7 +75,7 @@ public class PostServiceImpl implements PostService {
     public List<PostResponse> getPostsByUser(Long userId){
         // This will be used to view someone's else profile . Hence no need to do the authentication
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User Not Found")
+                () -> new ResourceNotFoundException("User not found")
         ); // does that user exists which i want to see the feed for
         // if the user is found hence
         List<Post> posts = postRepository.findByAuthor(user);

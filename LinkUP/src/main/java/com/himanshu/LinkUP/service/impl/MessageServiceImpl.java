@@ -4,6 +4,8 @@ import com.himanshu.LinkUP.dto.MessageResponse;
 import com.himanshu.LinkUP.dto.SendMessageRequest;
 import com.himanshu.LinkUP.entity.Message;
 import com.himanshu.LinkUP.entity.User;
+import com.himanshu.LinkUP.exception.BadRequestException;
+import com.himanshu.LinkUP.exception.ResourceNotFoundException;
 import com.himanshu.LinkUP.repository.MessageRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
 import com.himanshu.LinkUP.service.MessageService;
@@ -29,17 +31,17 @@ public class MessageServiceImpl implements MessageService {
         // Logged-in user
         User sender = userRepository.findByEmail(email)
                 .orElseThrow(
-                () -> new RuntimeException("Sender doesn't exists")
+                () -> new ResourceNotFoundException("Sender not exists")
         );
 
         User receiver = userRepository.findById(request.getReceiverId())
                 .orElseThrow(
-                        () -> new RuntimeException("Receiver not found")
+                        () -> new ResourceNotFoundException("Receiver not found")
                 );
 
         // can't send message to Yourself
         if(sender.getId().equals(receiver.getId())){
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "You cannot send message to yourself"
             );
         }
@@ -65,13 +67,13 @@ public class MessageServiceImpl implements MessageService {
 
         User currentUser = userRepository.findByEmail(email).
                 orElseThrow(
-                        () -> new RuntimeException("Current user not found")
+                        () -> new ResourceNotFoundException("User not found")
                 );
 
         // check if other user exists
         userRepository.findById(userId).
                 orElseThrow(
-                        () -> new RuntimeException("User not found")
+                        () -> new ResourceNotFoundException("User not found")
                 );
 
         // if every thing is ok
@@ -96,18 +98,18 @@ public class MessageServiceImpl implements MessageService {
         // Logged-in user (obtained from Principal)
         User sender = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException("Sender doesn't exist")
+                        () -> new ResourceNotFoundException("Sender not found")
                 );
 
         // Receiver
         User receiver = userRepository.findById(request.getReceiverId())
                 .orElseThrow(
-                        () -> new RuntimeException("Receiver not found")
+                        () -> new ResourceNotFoundException("Receiver not found")
                 );
 
         // Cannot send message to yourself
         if (sender.getId().equals(receiver.getId())) {
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "You cannot send message to yourself"
             );
         }
