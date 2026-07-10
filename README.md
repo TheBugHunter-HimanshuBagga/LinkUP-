@@ -457,16 +457,29 @@ graph TD
 ## 🔜 Phase 5 — Production Readiness
 
 - ✅ Global Exception Handling
-- Unit Testing
-- Integration Testing
-- Redis Caching
-- Docker
-- Docker Compose
-- GitHub Actions CI/CD
-- Spring Boot Actuator
-- Monitoring
-- Kubernetes
-- AWS Deployment
+- ✅ Unit Testing — Authentication Service (`AuthServiceImpl`)
+
+### 🔄 In Progress
+
+- [ ] Unit Testing — Post Service
+- [ ] Unit Testing — Like Service
+- [ ] Unit Testing — Comment Service
+- [ ] Unit Testing — Notification Service
+- [ ] Unit Testing — Message Service
+- [ ] Unit Testing — Document Service
+- [ ] Unit Testing — Connection Request Service
+
+### 📅 Upcoming
+
+- [ ] Integration Testing
+- [ ] Redis Caching
+- [ ] Docker
+- [ ] Docker Compose
+- [ ] GitHub Actions (CI/CD)
+- [ ] Spring Boot Actuator
+- [ ] Application Monitoring
+- [ ] Kubernetes
+- [ ] AWS Deployment
 
 ---
 
