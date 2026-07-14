@@ -483,6 +483,46 @@ graph TD
 
 ---
 
+## 🔐 Phase 6 — Advanced Security & Authentication
+
+### ✅ Authentication & Authorization
+
+- [ ] Bean Validation
+- [ ] Method-Level Security (`@PreAuthorize`)
+- [ ] Role-Based Access Control (RBAC)
+- [ ] Permission-Based Authorization
+- [ ] Custom Access Denied Handler
+
+### 🔑 Authentication Enhancements
+
+- [ ] Refresh Token Authentication
+- [ ] Email Verification
+- [ ] Forgot Password
+- [ ] Reset Password via Email
+- [ ] Change Password
+
+### 🌐 OAuth2 & Social Login
+
+- [ ] Google OAuth2 Login
+- [ ] GitHub OAuth2 Login
+
+### 🛡️ Security Hardening
+
+- [ ] Rate Limiting
+- [ ] Brute Force Protection
+- [ ] Account Lockout Mechanism
+- [ ] Secure Password Policy
+- [ ] CORS Configuration
+- [ ] CSRF Protection
+- [ ] Security Headers
+- [ ] Request Validation
+
+### 📋 Security Auditing
+
+- [ ] Login Audit Logs
+- [ ] Security Event Tracking
+- [ ] Failed Login Monitoring
+
 # 📊 Current Project Progress
 
 - ✅ Authentication & Authorization
