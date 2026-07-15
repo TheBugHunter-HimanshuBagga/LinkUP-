@@ -454,15 +454,20 @@ graph TD
 - 🔐 JWT Secured WebSocket Sessions
 ---
 
-## 🔜 Phase 5 — Production Readiness
+## 🚀 Phase 5 — Production Readiness
 
-- ✅ Global Exception Handling
-- ✅ Unit Testing — Authentication Service (`AuthServiceImpl`)
+### ✅ Completed
+
+- [x] Global Exception Handling
+- [x] Unit Testing — Authentication Service (`AuthServiceImpl`)
+- [x] Unit Testing — Post Service (`PostServiceImpl`)
+- [x] Unit Testing — Like Service (`LikeServiceImpl`)
+- [x] Docker Setup
+- [x] Redis Installation & Docker Integration
 
 ### 🔄 In Progress
 
-- [ ] Unit Testing — Post Service
-- [ ] Unit Testing — Like Service
+- [ ] Redis Caching
 - [ ] Unit Testing — Comment Service
 - [ ] Unit Testing — Notification Service
 - [ ] Unit Testing — Message Service
@@ -472,8 +477,6 @@ graph TD
 ### 📅 Upcoming
 
 - [ ] Integration Testing
-- [ ] Redis Caching
-- [ ] Docker
 - [ ] Docker Compose
 - [ ] GitHub Actions (CI/CD)
 - [ ] Spring Boot Actuator
