@@ -10,6 +10,8 @@ import com.himanshu.LinkUP.repository.PostRepository;
 import com.himanshu.LinkUP.repository.UserRepository;
 import com.himanshu.LinkUP.service.ActivityService;
 import com.himanshu.LinkUP.service.PostService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +26,9 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final ActivityService activityService;
+
     @Override
+    @CacheEvict(cacheNames  = "posts", allEntries = true) // rempove all
     public PostResponse createPost(CreatePostRequest request){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -59,6 +63,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Cacheable("posts") // before executing this method, chewck for the cache named posts
     public List<PostResponse> getFeed(){
         List<Post> posts = postRepository.findAll();
         return posts.stream().map(

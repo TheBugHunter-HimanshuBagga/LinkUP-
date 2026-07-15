@@ -456,6 +456,8 @@ graph TD
 
 ## 🚀 Phase 5 — Production Readiness
 
+## 🚀 Phase 5 — Production Readiness
+
 ### ✅ Completed
 
 - [x] Global Exception Handling
@@ -464,10 +466,10 @@ graph TD
 - [x] Unit Testing — Like Service (`LikeServiceImpl`)
 - [x] Docker Setup
 - [x] Redis Installation & Docker Integration
+- [x] Redis Caching (Spring Cache using `@Cacheable` & `@CacheEvict`)
 
 ### 🔄 In Progress
 
-- [ ] Redis Caching
 - [ ] Unit Testing — Comment Service
 - [ ] Unit Testing — Notification Service
 - [ ] Unit Testing — Message Service
